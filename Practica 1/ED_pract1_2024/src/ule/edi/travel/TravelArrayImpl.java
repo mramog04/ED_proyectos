@@ -72,14 +72,26 @@ public int getNumberOfSoldSeats() {
 @Override
 public int getNumberOfNormalSaleSeats() {
 	// TODO Auto-generated method stub
-	return 0;
+	int contador = 0;
+	for(int i = 0;i<=this.seats.length;i++){
+		if(this.seats[i].getAdvanceSale()!=false){
+			contador++;
+		}
+	}
+	return contador;
 }
 
 
 @Override
 public int getNumberOfAdvanceSaleSeats() {
 	// TODO Auto-generated method stub
-	return 0;
+	int contador = 0;
+	for(int i = 0;i<=this.seats.length;i++){
+		if(this.seats[i].getAdvanceSale()){
+			contador++;
+		}
+	}
+	return contador;
 }
 
 
@@ -112,29 +124,19 @@ public Seat getSeat(int pos) {
 @Override
 public Person refundSeat(int pos) {
 	// TODO Auto-generated method stub
-	
-	return null;
+	return (this.seats[pos].getHolder()!=null)? this.seats[pos].getHolder():null;
 }
 
 
 
 private boolean isChildren(int age) {
 	// TODO Auto-generated method stub
-
-	if (age < 18){
-		return true;
-	}else {
-		return false;
-	}
+	return age<18;
 }
 
 private boolean isAdult(int age) {
 	// TODO Auto-generated method stub
-	if (age >= 18){
-		return true;
-	}else {
-		return false;
-	}
+	return age>=18;
 }
 
 
@@ -161,15 +163,28 @@ public List<Integer> getAdvanceSaleSeatsList() {
 @Override
 public int getMaxNumberConsecutiveSeats() {
 	// TODO Auto-generated method stub
-	return 0;
+	int contador=0;
+	for (int i = 0;i<=this.getNumberOfSeats();i++){
+		if(this.seats[i].getHolder()==null){
+			contador++;
+		}else{
+			break;
+		}
+	}
+	return contador;
 }
 
 
 
-
+//preguntar como hacer par resolver el problema de que tengo que poner un return false.
 @Override
 public boolean isAdvanceSale(Person p) {
 	// TODO Auto-generated method stub
+	for (int i = 0;i<=this.getNumberOfSeats();i++){
+		if(this.seats[i].getHolder()==p){
+			return (this.seats[i].getAdvanceSale()==true)? true:false;
+		}
+	}
 	return false;
 }
 
@@ -184,7 +199,14 @@ public Date getTravelDate() {
 @Override
 public boolean sellSeatPos(int pos, String nif, String name, int edad, boolean isAdvanceSale) {
 	// TODO Auto-generated method stub
-	return false;
+	Person person = new Person(nif, name, edad);
+	Seat seat = new Seat(isAdvanceSale, person);
+	if(this.seats[pos].getHolder()==null){
+		this.seats[pos]=seat;
+		return true;
+	}else{
+		return false;
+	}
 }
 
 
@@ -218,8 +240,16 @@ public int getNumberOfAdults() {
 @Override
 public Double getCollectionTravel() {
 	// TODO Auto-generated method stub
-	
-	return 0.0;
+	Double recaudado = 0.0;
+	for(int i = 0; i <= this.getNumberOfSeats(); i++ ){
+		if(this.seats[i].getAdvanceSale()){
+			recaudado = recaudado + (DEFAULT_PRICE-DEFAULT_DISCOUNT);
+		}else if(this.seats[i].getAdvanceSale()== false){
+			recaudado = recaudado + DEFAULT_PRICE;
+		}
+		
+	}
+	return recaudado;
 }
 
 //hechar un vistazo a ese brake para hacerlo de otra forma
@@ -257,7 +287,7 @@ public int sellSeatRearPos(String nif, String name, int edad, boolean isAdvanceS
 @Override
 public Double getSeatPrice(Seat seat) {
 	// TODO Auto-generated method stub
-	return 0.0;
+	return (seat.getAdvanceSale())? DEFAULT_PRICE-DEFAULT_DISCOUNT:DEFAULT_PRICE;
 }
 
 
