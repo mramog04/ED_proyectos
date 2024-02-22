@@ -1,5 +1,7 @@
 package ule.edi.travel;
 
+import static org.junit.Assert.assertEquals;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -120,7 +122,7 @@ public class TravelArrayImplTests {
 		Assert.assertEquals(true, e.sellSeatPos(1, "1010", "AA", 10, true));
 		Assert.assertEquals(true, e.sellSeatPos(4, "10101", "AA", 10, false));
 		
-		Assert.assertTrue(e.getCollectionTravel()==175.0);					
+		Assert.assertTrue(e.getCollectionTravel()==175.0);			
 	}
 	
 	// TEST List
