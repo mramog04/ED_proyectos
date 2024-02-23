@@ -126,7 +126,17 @@ public Seat getSeat(int pos) {
 @Override
 public Person refundSeat(int pos) {
 	// TODO Auto-generated method stub
-	return (this.seats[pos].getHolder()!=null)? this.seats[pos].getHolder():null;
+	if (pos <= 0){
+		return null;
+	}
+	pos = pos - 1;
+	Person person = this.seats[pos].getHolder();
+	if (this.seats[pos].getHolder()!=null){
+		this.seats[pos] = null;
+		return person;
+	}else {
+		return null;
+	}
 }
 
 
@@ -182,12 +192,18 @@ public int getMaxNumberConsecutiveSeats() {
 @Override
 public boolean isAdvanceSale(Person p) {
 	// TODO Auto-generated method stub
-	for (int i = 0;i<=this.getNumberOfSeats();i++){
-		if(this.seats[i].getHolder()==p){
-			return (this.seats[i].getAdvanceSale()==true)? true:false;
+	boolean resultado = false;
+	for (int i = 0;i<this.getNumberOfSeats();i++){
+		if(this.seats[i]!=null && this.seats[i].getHolder().getNif()==p.getNif()){
+			if(this.seats[i].getAdvanceSale()){
+				resultado = true;
+			}else {
+				resultado = false;
+			}
+			break;
 		}
 	}
-	return false;
+	return resultado;
 }
 
 
@@ -261,14 +277,17 @@ public Double getCollectionTravel() {
 public int getPosPerson(String nif) {
 	// TODO Auto-generated method stub
 	int contador = 1;
-	for(int i = 0; i <= this.getNumberOfSeats(); i++){
-		if (nif != this.seats[i].getHolder().getNif()){
+	for(int i = 0; i < this.getNumberOfSeats(); i++){
+		if (this.seats[i] == null) {
+			contador++;
+		}else if (nif != this.seats[i].getHolder().getNif()){
 			contador++;
 		}else {
-			break;
+			return contador;
 		}
+
 	}
-	return contador;	
+	return -1;	
 }
 
 

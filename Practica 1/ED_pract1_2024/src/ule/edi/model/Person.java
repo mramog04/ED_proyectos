@@ -49,11 +49,13 @@ public class Person {
 	
 		// TODO Auto-generated method stub
 		// Dos personas son iguales si son iguales sus nifs
-		if (this.nif == obj){
+		if (this == obj){
 			return true;
-		}else {
-			return false;
+		}else if (obj instanceof Person) {
+			Person other =(Person) obj;
+			return(this.nif.equals(other.nif));
 		}
+		return false;
     	
 	}
 	
