@@ -69,9 +69,9 @@ public int getNumberOfSoldSeats() {
 public int getNumberOfNormalSaleSeats() {
 	// TODO Auto-generated method stub
 	int contador = 0;
-	for(int i = 0;i<this.seats.length;i++){
+	for(int i = 0;i<this.getNumberOfSeats();i++){
 		if (this.seats[i]!= null){
-			if(this.seats[i].getAdvanceSale()!=false){
+			if(this.seats[i].getAdvanceSale()==false){
 				contador++;
 			}	
 		}
@@ -156,7 +156,11 @@ private boolean isAdult(int age) {
 public List<Integer> getAvailableSeatsList() {
 	// TODO Auto-generated method stub
 	List<Integer> lista=new ArrayList<Integer>(nSeats);
-	
+	for(int i = 1;i < this.getNumberOfSeats();i++){
+		if(this.seats[i]==null){
+			lista.add(i);
+		}
+	}
 	
 	return lista;
 }
@@ -166,7 +170,11 @@ public List<Integer> getAvailableSeatsList() {
 public List<Integer> getAdvanceSaleSeatsList() {
 	// TODO Auto-generated method stub
 	List<Integer> lista=new ArrayList<Integer>(nSeats);
-	
+	for(int i = 0;i < this.getNumberOfSeats();i++){
+		if(this.seats[i]!=null && this.seats[i].getAdvanceSale()==true){
+			lista.add(i+1);
+		}
+	}
 	
 	return lista;
 }
@@ -217,7 +225,7 @@ public Date getTravelDate() {
 @Override
 public boolean sellSeatPos(int pos, String nif, String name, int edad, boolean isAdvanceSale) {
 	// TODO Auto-generated method stub
-	if(pos<=0){
+	if(pos<=0 || pos > this.getNumberOfSeats()){
 		return false;
 	}
 	int poss = pos - 1;
