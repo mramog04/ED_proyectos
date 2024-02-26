@@ -118,20 +118,23 @@ public int getNumberOfAvailableSeats() {
 @Override
 public Seat getSeat(int pos) {
 	// TODO Auto-generated method stub
-	int poss =  pos - 1;
-	return this.seats[poss];
+	if (pos <= 0 && pos > this.getNumberOfSeats()){
+		return null;
+	}
+	pos =  pos - 1;
+	return this.seats[pos];
 }
 
 
 @Override
 public Person refundSeat(int pos) {
 	// TODO Auto-generated method stub
-	if (pos <= 0){
+	if (pos <= 0 && pos > this.getNumberOfSeats()){
 		return null;
 	}
 	pos = pos - 1;
 	Person person = this.seats[pos].getHolder();
-	if (this.seats[pos].getHolder()!=null){
+	if (this.seats[pos]!=null){
 		this.seats[pos] = null;
 		return person;
 	}else {
@@ -170,9 +173,9 @@ public List<Integer> getAvailableSeatsList() {
 public List<Integer> getAdvanceSaleSeatsList() {
 	// TODO Auto-generated method stub
 	List<Integer> lista=new ArrayList<Integer>(nSeats);
-	for(int i = 0;i < this.getNumberOfSeats();i++){
+	for(int i = 1;i < this.getNumberOfSeats();i++){
 		if(this.seats[i]!=null && this.seats[i].getAdvanceSale()==true){
-			lista.add(i+1);
+			lista.add(i);
 		}
 	}
 	
@@ -183,11 +186,30 @@ public List<Integer> getAdvanceSaleSeatsList() {
 @Override
 public int getMaxNumberConsecutiveSeats() {
 	// TODO Auto-generated method stub
+	//revisar esto que no esta acabado
 	int contador=0;
+	int a,b,c;
 	for (int i = 0;i<=this.getNumberOfSeats();i++){
-		if(this.seats[i].getHolder()==null){
+		if(this.seats[i]==null){
 			contador++;
 		}else{
+			a = contador;
+			break;
+		}
+	}
+	for (int i = 0;i<=this.getNumberOfSeats();i++){
+		if(this.seats[i]==null){
+			contador++;
+		}else{
+			b = contador;
+			break;
+		}
+	}
+	for (int i = 0;i<=this.getNumberOfSeats();i++){
+		if(this.seats[i]==null){
+			contador++;
+		}else{
+			c = contador;
 			break;
 		}
 	}
@@ -225,14 +247,20 @@ public Date getTravelDate() {
 @Override
 public boolean sellSeatPos(int pos, String nif, String name, int edad, boolean isAdvanceSale) {
 	// TODO Auto-generated method stub
+
 	if(pos<=0 || pos > this.getNumberOfSeats()){
 		return false;
 	}
-	int poss = pos - 1;
+	pos = pos - 1;
 	Person person = new Person(nif, name, edad);
 	Seat seat = new Seat(isAdvanceSale, person);
-	if(this.seats[poss]==null){
-		this.seats[poss]=seat;
+	for(int i = 0; i < this.getNumberOfSeats(); i++){
+		if(this.seats[i]!=null && this.seats[i].getHolder()==person){
+			return false;
+		}
+	}
+	if(this.seats[pos]==null){
+		this.seats[pos]=seat;
 		return true;
 	}else{
 		return false;
@@ -336,8 +364,9 @@ public int sellSeatRearPos(String nif, String name, int edad, boolean isAdvanceS
 		Person person = new Person(nif, name, edad);
 		Seat seat = new Seat(isAdvanceSale, person);
 		this.seats[contador]=seat;
+		return contador+1;
 	}
-	return contador+1;
+	
 }
 
 
