@@ -182,10 +182,62 @@ public class TravelArrayImplTests {
 			   Assert.assertEquals(3,ep.getPosPerson("10203040A"));
 					 
 		}
+
+	@Test
+		public void testsellRearPosCompleto(){
+			Assert.assertEquals(4, ep.sellSeatRearPos("10202030A", "pepe", 20, false));
+			Assert.assertEquals(3, ep.sellSeatRearPos("10202030B", "pepe", 20, false));
+			Assert.assertEquals(2, ep.sellSeatRearPos("10203030C", "pepe", 20, false));
+			Assert.assertEquals(1, ep.sellSeatRearPos("10202030", "pepe", 20, false));
+			Assert.assertEquals(-1, ep.sellSeatRearPos("10202030", "pepe", 20, false));
+		}
 		
+	@Test
+		public void testSellFrontPosCompleto(){
+			Assert.assertEquals(1,ep.sellSeatFrontPos("10203040A", "Marco", 20, false));
+			Assert.assertEquals(2,ep.sellSeatFrontPos("10203040B", "Marco", 20, false));
+			Assert.assertEquals(3,ep.sellSeatFrontPos("10203040C", "Marco", 20, false));
+			Assert.assertEquals(4,ep.sellSeatFrontPos("10203040D", "Marco", 20, false));
+			Assert.assertEquals(-1,ep.sellSeatFrontPos("10203040E", "Marco", 20, false));
+
+		}
 		
+	@Test
+		public void testGetSeatNull(){
+			Assert.assertEquals(null, ep.getSeat(-1));
+			Assert.assertEquals(null, ep.getSeat(20));
+		}
 	
+	@Test
+		public void testRefundSeatNull(){
+			Assert.assertEquals(null, ep.refundSeat(3));
+		}
 			
+	@Test
+		public void testGetMaxNumberConsecutiveSeats(){
+			Assert.assertEquals(4, ep.getMaxNumberConsecutiveSeats());
+			Assert.assertTrue(ep.sellSeatPos(1, "10203040A","Alice", 17,false));
+			Assert.assertTrue(ep.sellSeatPos(2, "10203040B","Alice", 17,false));
+			Assert.assertTrue(ep.sellSeatPos(3, "10203040C","Alice", 17,false));
+			Assert.assertTrue(ep.sellSeatPos(4, "10203040D","Alice", 17,false));
+			Assert.assertEquals(0, ep.getMaxNumberConsecutiveSeats());
+
+		}
+
+	@Test
+		public void testGetNumberOfChldren(){
+			Assert.assertTrue(e.sellSeatPos(4, "10203040A","Alice", 17,false));
+			Assert.assertTrue(e.sellSeatPos(3, "10203040B","Alice", 17,false));
+			Assert.assertTrue(e.sellSeatPos(2, "10203040C","Alice", 17,false));
+			Assert.assertEquals(3, e.getNumberOfChildren());
+		}
+
+	@Test
+		public void testsellRearFrontPosExiste(){
+			Assert.assertTrue(e.sellSeatPos(4, "10203040A","Alice", 17,false));
+			Assert.assertEquals(-1, e.sellSeatRearPos("10203040A","Alice", 17,false));
+			Assert.assertEquals(-1, e.sellSeatFrontPos("10203040A","Alice", 17,false));
+		}
 }
 
 
