@@ -63,6 +63,11 @@ public class ArrayEDList<T> implements IEDList<T> {
 		return (count==0);
 	}
 
+	private void elemnull(T elem){
+		if(elem == null){
+			throw new NullPointerException();
+		}
+	}
 	
 	private void expandCapacity(){
 
@@ -73,47 +78,114 @@ public class ArrayEDList<T> implements IEDList<T> {
 		this.data=larger;
 	}
 	
+	private boolean contains(T elem){
+		boolean value = false;
+		for(int i = 0; i <= data.length;i++){
+			if(data[i].equals(elem)){
+				value = true;
+			}
+		}
+		return value;
+	}
+
+	private void emptyList() throws EmptyCollectionException{
+		if(count == 0){
+			throw new EmptyCollectionException(null);
+		}
+	}
 	@Override
 	public void addFirst(T elem) {
 		// TODO 
-		
+		elemnull(elem);
+		T[] save = (T[])(new Object[data.length*2]);
+		if(!(contains(elem)) && size()==data.length){
+			expandCapacity();
+			for(int i = 0;i<=data.length;i++){
+				save[i+1]=data[i];
+			}
+			save[0]=elem;
+			data = save;
+			count++;
+		}
 	}
 
 
 	@Override
 	public void addLast(T elem) {
 		// TODO
-		if(!(contains(elem))){
-			if(size()==data.length){
-				expandCapacity();
-				data[count]=elem;
-				count++;
-			}
+		elemnull(elem);
+		if(!(contains(elem)) && size()==data.length){
+			expandCapacity();
+			data[count]=elem;
+			count++;
 		}
 	}
 
 	@Override
 	public void addPenult(T elem) {
 		// TODO	
+		elemnull(elem);
+		T[] save = (T[])(new Object[data.length*2]);
+		if(!(contains(elem)) && size()==data.length){
+			expandCapacity();
+			save = data;
+			save[count+1]=data[count];
+			save[count]=elem;
+			count++;
+			data = save;
+		}
+
 	}
 
 	@Override
 	public void addPos(T elem, int position) {
 		// TODO 
+		elemnull(elem);
+		T[] save = (T[])(new Object[data.length*2]);
+		if(position<=0){
+			throw new IllegalArgumentException();
+		}
+		if(position>size()){
+			addLast(elem);
+		}
+		if(!(contains(elem)) && size()==data.length){
+			expandCapacity();
+			save = data;
+			for(int i = position-1;i<=data.length;i++){
+				save[i+1]=data[i];
+			}
+			save[position]=elem;
+			data = save;
+		}
 	}
 
+	// Es muy probable que aqui salte un nullpointer exception
 	@Override
 	public T removeFirst() throws EmptyCollectionException {
 		// TODO 
-	
-		return null;
+		emptyList();
+		T value;
+		T[] save = (T[])(new Object[data.length*2]);
+		for(int i = 0;i<=data.length;i++){
+			save[i-1]=data[i];
+			count--;
+		}
+		value=data[0];
+		data=save;
+		return value;
 		
 	}
 
 	@Override
 	public T removelast() throws EmptyCollectionException {
 		// TODO 
-		return null;
+		emptyList();
+		T value;
+		value=data[count];
+		for(int i = 0;i<=data.length;i++){
+			data[i]=data[i+1];
+		}
+		return value;
 	}
 
 	@Override
