@@ -35,7 +35,53 @@ public class ArrayEDList<T> implements IEDList<T> {
 		}
 		}
 
+	private class ArrayEDListEvenPositionIterator<T> implements Iterator<T>{
+		private int current=0;
 
+		@Override
+		public boolean hasNext() {
+		//TODO
+		return current < count;
+		
+		}
+
+		@SuppressWarnings("unchecked")
+		@Override
+		public T next() {
+			//TODO	
+			if(!hasNext()){
+				throw new NoSuchElementException();
+			}
+			if(current%2!=0){
+				current++;
+			}
+			return (T) data[current+=2];
+		}
+	} 
+	private class ArrayEDListOddPositionIterator<T> implements Iterator<T> {
+		private int current=1;
+
+		@Override
+		public boolean hasNext() {
+		//TODO
+		return current < count;
+		
+		}
+
+		@SuppressWarnings("unchecked")
+		@Override
+		public T next() {
+			//TODO	
+			if(!hasNext()){
+				throw new NoSuchElementException();
+			}
+			if(current%2==0){
+				current++;
+			}
+			return (T) data[current+=2];
+		}
+		}
+	
 	/// TODO :  AÑADIR OTRAS CLASES PARA LOS OTROS ITERADORES
 	
 	// FIN ITERADORES
@@ -255,7 +301,7 @@ public class ArrayEDList<T> implements IEDList<T> {
 	public int removeAll(T elem) throws EmptyCollectionException {
 		// TODO 
 		int contador=0;
-		for(int i = 0;i<=data.length;i++){
+		for(int i = 0;i<count;i++){
 			if(data[i]==elem){
 				removeElem(elem);
 				contador++;
@@ -266,8 +312,14 @@ public class ArrayEDList<T> implements IEDList<T> {
 
 	@Override
 	public String toString() {
-		// TODO 
-		return "";
+		// TODO
+		StringBuilder sb = new StringBuilder();
+		for(int i = 0;i<count;i++){
+			if(data[i]!=null){
+				sb.append(data[i]);
+			}
+		} 
+		return sb.toString();
 	}
    
 	
@@ -275,12 +327,15 @@ public class ArrayEDList<T> implements IEDList<T> {
 	@Override
 	public void clear() {
 		// TODO Auto-generated method stub
-		
+		T[] save = (T[])(new Object[data.length]);
+		data=save;
+		count=0;
 	}
 
 	@Override
 	public int getPosFirst(T elem) {
 		// TODO Auto-generated method stub
+
 		return 0;
 	}
 
@@ -293,12 +348,24 @@ public class ArrayEDList<T> implements IEDList<T> {
 	@Override
 	public int countElem(T elem) {
 		// TODO Auto-generated method stub
-		return 0;
+		elemnull(elem);
+		int value = -1;
+		for(int i = 0;i<count;i++){
+			if(data[i]!=null && data[i]==elem){
+				value=i;
+				break;
+			}
+		}
+		if(value==-1){
+			throw new NoSuchElementException("El elemento no esta en la lista");
+		}
+		return value;
 	}
 	
 	@Override
 	public Iterator<T> iterator() {
 		// TODO Auto-generated method stub
+		
 		return new ArrayEDListIterator<T>();
 	}
 
@@ -306,13 +373,14 @@ public class ArrayEDList<T> implements IEDList<T> {
 	@Override
 	public Iterator<T> evenPositionsIterator() {
 		// TODO Auto-generated method stub
-		return null;
+		
+		return new ArrayEDListEvenPositionIterator<T>();
 	}
 
 	@Override
 	public Iterator<T> oddPositionsIterator() {
 		// TODO Auto-generated method stub
-		return null;
+		return new ArrayEDListOddPositionIterator<T>();
 	}
 
 	@Override
