@@ -31,12 +31,13 @@ public class ArrayEDList<T> implements IEDList<T> {
 			if(!hasNext()){
 				throw new NoSuchElementException();
 			}
-			return (T) data[current++];
+			current++;
+			return (T) data[current-1];
 		}
 		}
 
 	private class ArrayEDListEvenPositionIterator<T> implements Iterator<T>{
-		private int current=0;
+		private int current=1;
 
 		@Override
 		public boolean hasNext() {
@@ -52,10 +53,8 @@ public class ArrayEDList<T> implements IEDList<T> {
 			if(!hasNext()){
 				throw new NoSuchElementException();
 			}
-			if(current%2!=0){
-				current++;
-			}
-			return (T) data[current+=2];
+			current+=2;
+			return (T) data[current-2];
 		}
 	} 
 	private class ArrayEDListOddPositionIterator<T> implements Iterator<T> {
@@ -75,13 +74,45 @@ public class ArrayEDList<T> implements IEDList<T> {
 			if(!hasNext()){
 				throw new NoSuchElementException();
 			}
-			if(current%2==0){
-				current++;
-			}
-			return (T) data[current+=2];
+			current+=2;
+			return (T) data[current-2];
 		}
 		}
 	
+
+		private class ArrayEDListOddEvenIterator<T> implements Iterator<T> {
+			private int current=1;
+			private int a = 0;
+	
+			@Override
+			public boolean hasNext() {
+			//TODO
+			return current < count;
+			
+			}
+	
+			@SuppressWarnings("unchecked")
+			@Override
+			public T next() {
+				//TODO	
+				if(!hasNext()){
+					throw new NoSuchElementException();
+				}
+				if(current%2==0){
+					current++;
+				}
+				if(current==count){
+					a=20;
+					current = 0;
+				}
+				if(a==20){
+					current+=2;
+					return (T) data[current-2];
+				}
+				current+=2;
+				return (T) data[current-2];
+			}
+			}
 	/// TODO :  AÑADIR OTRAS CLASES PARA LOS OTROS ITERADORES
 	
 	// FIN ITERADORES
@@ -149,13 +180,13 @@ public class ArrayEDList<T> implements IEDList<T> {
 		T[] save = (T[])(new Object[data.length*2]);
 		if(!(contains(elem)) && size()==data.length){
 			expandCapacity();
-			for(int i = 0;i<=data.length;i++){
-				save[i+1]=data[i];
-			}
-			save[0]=elem;
-			data = save;
-			count++;
 		}
+		for(int i = 0;i<count;i++){
+			save[i+1]=data[i];
+		}
+		save[0]=elem;
+		data = save;
+		count++;
 	}
 
 
@@ -165,9 +196,9 @@ public class ArrayEDList<T> implements IEDList<T> {
 		elemnull(elem);
 		if(!(contains(elem)) && size()==data.length){
 			expandCapacity();
-			data[count]=elem;
-			count++;
 		}
+		data[count]=elem;
+		count++;
 	}
 
 	@Override
@@ -177,12 +208,12 @@ public class ArrayEDList<T> implements IEDList<T> {
 		T[] save = (T[])(new Object[data.length*2]);
 		if(!(contains(elem)) && size()==data.length){
 			expandCapacity();
-			save = data;
-			save[count+1]=data[count];
-			save[count]=elem;
-			count++;
-			data = save;
 		}
+		save = data;
+		save[count+1]=data[count];
+		save[count]=elem;
+		count++;
+		data = save;
 
 	}
 
@@ -199,14 +230,15 @@ public class ArrayEDList<T> implements IEDList<T> {
 		}
 		if(!(contains(elem)) && size()==data.length){
 			expandCapacity();
-			save = data;
-			for(int i = position-1;i<=data.length;i++){
-				save[i+1]=data[i];
-			}
-			save[position]=elem;
-			data = save;
 		}
+		save = data;
+		for(int i = position-1;i<=data.length;i++){
+			save[i+1]=data[i];
+		}
+		save[position]=elem;
+		data = save;
 	}
+	
 
 	// Es muy probable que aqui salte un nullpointer exception
 	@Override
@@ -314,11 +346,13 @@ public class ArrayEDList<T> implements IEDList<T> {
 	public String toString() {
 		// TODO
 		StringBuilder sb = new StringBuilder();
+		sb.append("(");
 		for(int i = 0;i<count;i++){
 			if(data[i]!=null){
-				sb.append(data[i]);
+				sb.append(data[i]+" ");
 			}
 		} 
+		sb.append(")");
 		return sb.toString();
 	}
    
@@ -335,10 +369,17 @@ public class ArrayEDList<T> implements IEDList<T> {
 	@Override
 	public int getPosFirst(T elem) {
 		// TODO Auto-generated method stub
-
-		return 0;
+		elemnull(elem);
+		for(int i = 0;i < count;i++){
+			if(data[i]==elem){
+				return i;
+			}
+		}
+		throw new NoSuchElementException("El elemento no estaba en la lista.");
+		
 	}
 
+	//METODO NO HECHO!!!!!
 	@Override
 	public IEDList<T> listOfRepeatedElems() {
 		// TODO Auto-generated method stub
@@ -386,6 +427,6 @@ public class ArrayEDList<T> implements IEDList<T> {
 	@Override
 	public Iterator<T> OddEvenIterator() {
 		// TODO Auto-generated method stub
-		return null;
+		return new ArrayEDListOddEvenIterator<T>();
 	}
 }
