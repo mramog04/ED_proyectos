@@ -52,41 +52,88 @@ public class LinkedEDList<T> implements IEDList<T> {
 	/// TODO :  AÑADIR OTRAS CLASES PARA LOS OTROS ITERADORES
 	
 		// FIN ITERADORES
-		
+		private void elemnull(T elem){
+			if(elem == null){
+				throw new NullPointerException();
+			}
+		}
 	
 
 
 	@Override
 	public int size() {
 		// TODO 
-		
-		return 0;
+		int contador = 0;
+		Node<T> current = this.front;
+		while (current.next != null){
+			current = current.next;
+			contador++;
+		}
+		return contador;
 	}
 
 	@Override
 	public boolean isEmpty() {
 		// TODO 
-		return false;
+		return this.front==null;
 	}
 
 	@Override
 	public void addFirst(T elem) {
 		// TODO 
+		elemnull(elem);
+		Node<T> current = this.front;
+		Node<T> newNode = new Node<T>(elem);
+		front=newNode;
+		newNode.next = current;
+
+
 	}
 
 	@Override
 	public void addLast(T elem) {
 		// TODO 
+		elemnull(elem);
+		Node<T> current = this.front;
+		Node<T> newNode = new Node<T>(elem);
+		while(current.next!=null){
+			current=current.next;
+		}
+		current.next=newNode;
 	}
 
 	@Override
 	public void addPenult(T elem) {
 		// TODO 
+		elemnull(elem);
+		Node<T> last = this.front;
+		Node<T> current = this.front;
+		Node<T> newNode = new Node<T>(elem);
+		while(last.next!=null){
+			last=last.next;
+		}
+		for(int i = size()-2;i>0;i--){
+			current=current.next;
+		}
+		current.next=newNode;
+		newNode.next=last;
 	}
 
 	@Override
 	public void addPos(T elem, int position) {
 		// TODO 
+		elemnull(elem);
+		Node<T> next = this.front;
+		Node<T> current = this.front;
+		Node<T> newNode = new Node<T>(elem);
+		for(int i = position-1;i>0;i--){
+			next=next.next;
+		}
+		for(int i = position-2;i>0;i--){
+			current=current.next;
+		}
+		current.next=newNode;
+		newNode.next=next;
 	}
 
 	@Override
@@ -134,8 +181,15 @@ public class LinkedEDList<T> implements IEDList<T> {
 	@Override
 	public String toString() {
 		// TODO
-		
-		return "";
+		StringBuilder sb = new StringBuilder();
+		Node<T> current = this.front;
+		sb.append("(");
+		while(current!=null){
+			sb.append(current.elem+" ");
+			current=current.next;
+		}
+		sb.append(")");
+		return sb.toString();
 	}
 
 
