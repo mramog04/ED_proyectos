@@ -74,8 +74,7 @@ public interface IEDList<T> {
 	 * 
 	 * @param elem el elemento a añadir
 	 * 
-	 * @throws NullPointe		Assert.assertEquals("(2 )", lista.toString());
-rException si elem es <code>null</code>
+	 * @throws NullPointerException si elem es <code>null</code>		
 	 */
 	public void addFirst(T elem);
 
