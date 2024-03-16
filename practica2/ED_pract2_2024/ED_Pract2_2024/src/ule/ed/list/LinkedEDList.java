@@ -1,6 +1,9 @@
 package ule.ed.list;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 public class LinkedEDList<T> implements IEDList<T> {
@@ -27,25 +30,28 @@ public class LinkedEDList<T> implements IEDList<T> {
 	//@SuppressWarnings("hiding")
 	private class LinkedListIterator<T> implements Iterator<T> {
 		// declarar atributos del iterador
+		private Node<T> current;
 		
 		public LinkedListIterator(Node<T> aux) {
 			//TODO
+			this.current = aux;
 		}
 
 		@Override
 		public boolean hasNext() {
 			//TODO
-			
-			return false;
+			return current != null;
 		}
 
 		@Override
 		public T next() {
 	  // TODO
-			
-			return null;
-
-			
+			if(!hasNext()){
+				throw new NoSuchElementException("No hay siguiente elemento");
+			}
+			T elem = current.elem;
+			current = current.next;
+			return elem;			
 		}	
 	}
 	
@@ -62,6 +68,29 @@ public class LinkedEDList<T> implements IEDList<T> {
 			if(front.next==null){
 				throw new EmptyCollectionException("Lista vacia");
 			}
+		}
+
+		private boolean contains(T data) {
+			Node<T> current = this.front;
+			while (current != null) {
+				if (current.elem.equals(data)) {
+					return true;
+				}
+				current = current.next;
+			}
+			return false;
+		}
+		
+		private int countOccurrences(T data) {
+			int count = 0;
+			Node<T> current = this.front;
+			while (current != null) {
+				if (current.elem.equals(data)) {
+					count++;
+				}
+				current = current.next;
+			}
+			return count;
 		}
 	
 
@@ -294,25 +323,53 @@ public class LinkedEDList<T> implements IEDList<T> {
 		@Override
 		public void clear() {
 			// TODO Auto-generated method stub
-			
+			Node<T> current = this.front;
+			current.next=null;	
 		}
 
 		@Override
 		public int getPosFirst(T elem) {
 			// TODO Auto-generated method stub
-			return 0;
+			elemnull(elem);
+			Node<T> current = this.front;
+			Node<T> Node = new Node<T>(elem);
+			int contador = 0;
+			while(current!=Node){
+				current = current.next;
+				contador++;
+			}
+			return contador;
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public IEDList<T> listOfRepeatedElems() {
-			// TODO Auto-generated method stub
-			return null;
+			LinkedList<T> repeatedList = new LinkedList<>();
+    		Node<T> current = front;
+
+    		while (current != null) {
+        		if (!repeatedList.contains(current.elem) && countOccurrences(current.data) > 1) {
+            		repeatedList.add(current.elem);
+        		}
+        		current = current.next;
+    		}
+
+    		return  (IEDList<T>) repeatedList;
 		}
 
 		@Override
 		public int countElem(T elem) {
 			// TODO Auto-generated method stub
-			return 0;
+			Node<T> current = this.front;
+			Node<T> Node = new Node<T>(elem);
+			int contador = 0;
+			for(int i = size()-1;i>0;i++){
+				if(current==Node){
+					contador++;
+				}
+				current=current.next;
+			}
+			return contador;
 		}
 
 		@Override
