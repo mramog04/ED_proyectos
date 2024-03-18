@@ -161,11 +161,21 @@ public class ArrayEDList<T> implements IEDList<T> {
 	private boolean contains(T elem){
 		boolean value = false;
 		for(int i = 0; i < count;i++){
-			if(data[i].equals(elem)){
+			if(this.data[i].equals(elem)){
 				value = true;
 			}
 		}
 		return value;
+	}
+
+	private int countOcurrences(T elem){
+		int contador=0;
+		for(int i = 0; i < count;i++){
+			if(this.data[i].equals(elem)){
+				contador++;
+			}
+		}
+		return contador;
 	}
 
 	private void emptyList() throws EmptyCollectionException{
@@ -383,7 +393,15 @@ public class ArrayEDList<T> implements IEDList<T> {
 	@Override
 	public IEDList<T> listOfRepeatedElems() {
 		// TODO Auto-generated method stub
-		return null;
+		int i = 0,pos = 0;
+		ArrayEDList list = new ArrayEDList<T>();
+		while(data[i]!=null){
+			if(countOcurrences(data[i])>1 && !list.contains(data[i])){
+				list.addPos(data[i],pos);
+			}
+			i++;
+		}
+		return list;
 	}
 
 	@Override
