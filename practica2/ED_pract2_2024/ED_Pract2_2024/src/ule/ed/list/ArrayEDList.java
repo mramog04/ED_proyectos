@@ -215,13 +215,16 @@ public class ArrayEDList<T> implements IEDList<T> {
 	public void addPenult(T elem) {
 		// TODO	
 		elemnull(elem);
-		T[] save = (T[])(new Object[data.length*2]);
+		T[] save;
 		if(!(contains(elem)) && size()==data.length){
 			expandCapacity();
+			save = (T[])(new Object[data.length*2]);
+		}else{
+			save = (T[])(new Object[data.length]);
 		}
 		save = data;
-		save[count+1]=data[count];
 		save[count]=elem;
+		save[count+1]=data[count];
 		count++;
 		data = save;
 
@@ -242,7 +245,7 @@ public class ArrayEDList<T> implements IEDList<T> {
 			expandCapacity();
 		}
 		save = data;
-		for(int i = position-1;i<=data.length;i++){
+		for(int i = position-1;i<count;i++){
 			save[i+1]=data[i];
 		}
 		save[position]=elem;
@@ -250,14 +253,14 @@ public class ArrayEDList<T> implements IEDList<T> {
 	}
 	
 
-	// Es muy probable que aqui salte un nullpointer exception
+	// NO FUNCIONA BIEN EL EMPTYCOLLECTTIONEXCEPTION
 	@Override
 	public T removeFirst() throws EmptyCollectionException {
 		// TODO 
 		emptyList();
 		T value = data[0];
 		T[] save = (T[])(new Object[data.length]);
-		for(int i = 0;i<count;i++){
+		for(int i = 1;i<count;i++){
 			save[i-1]=data[i];
 		}
 		count--;
@@ -281,7 +284,10 @@ public class ArrayEDList<T> implements IEDList<T> {
 
 	@Override
 	public T removePenult() throws EmptyCollectionException {
-		emptyList(); 
+		emptyList();
+		if(size()==1){
+			throw new NoSuchElementException();
+		}
 		T value = data[count - 2];
 		T[] save = (T[]) (new Object[data.length]);
 		for (int i = 0; i < count - 1; i++) {
@@ -290,7 +296,7 @@ public class ArrayEDList<T> implements IEDList<T> {
 		save[count - 1] = null;
 		data = save;
 		count--; 
-    return value;
+    	return value;
 	}
 
 
@@ -331,7 +337,7 @@ public class ArrayEDList<T> implements IEDList<T> {
 	public int getPosLast(T elem) {
 		// TODO 
 		elemnull(elem);
-		for(int i = data.length;i>=0;i--){
+		for(int i = count;i>0;i--){
 			if (data[i]==elem){
 				return i;
 			}
@@ -342,12 +348,17 @@ public class ArrayEDList<T> implements IEDList<T> {
 	@Override
 	public int removeAll(T elem) throws EmptyCollectionException {
 		// TODO 
+		elemnull(elem);
+		emptyList();
 		int contador=0;
 		for(int i = 0;i<count;i++){
 			if(data[i]==elem){
 				removeElem(elem);
 				contador++;
 			}
+		}
+		if (contador==0){
+			throw new NoSuchElementException();
 		}
 		return contador;
 	}
@@ -376,13 +387,14 @@ public class ArrayEDList<T> implements IEDList<T> {
 		count=0;
 	}
 
+	//PUEDE HABER PROBLEMAS CON LAS POSICIONES; DE MOMENTO HAY UNNA ÑAPA
 	@Override
 	public int getPosFirst(T elem) {
 		// TODO Auto-generated method stub
 		elemnull(elem);
 		for(int i = 0;i < count;i++){
 			if(data[i]==elem){
-				return i;
+				return i+1;
 			}
 		}
 		throw new NoSuchElementException("El elemento no estaba en la lista.");

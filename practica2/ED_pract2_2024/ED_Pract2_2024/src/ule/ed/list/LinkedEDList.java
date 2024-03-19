@@ -169,10 +169,10 @@ public class LinkedEDList<T> implements IEDList<T> {
 			}
 		}
 
-		private boolean contains(T data) {
+		private boolean contains(T elem) {
 			Node<T> current = this.front;
 			while (current != null) {
-				if (current.elem.equals(data)) {
+				if (current.elem.equals(elem)) {
 					return true;
 				}
 				current = current.next;
