@@ -58,7 +58,7 @@ public class ArrayEDList<T> implements IEDList<T> {
 		}
 	} 
 	private class ArrayEDListOddPositionIterator<T> implements Iterator<T> {
-		private int current=1;
+		private int current=0;
 
 		@Override
 		public boolean hasNext() {
@@ -143,6 +143,9 @@ public class ArrayEDList<T> implements IEDList<T> {
 		return (count==0);
 	}
 
+	public int getCount(){
+		return this.count;
+	}
 	private void elemnull(T elem){
 		if(elem == null){
 			throw new NullPointerException();
@@ -344,23 +347,33 @@ public class ArrayEDList<T> implements IEDList<T> {
 		}
 		throw new NoSuchElementException();
 	}
-
+	//repasar hacerlo de otra forma
 	@Override
 	public int removeAll(T elem) throws EmptyCollectionException {
 		// TODO 
-		elemnull(elem);
-		emptyList();
-		int contador=0;
-		for(int i = 0;i<count;i++){
-			if(data[i]==elem){
-				removeElem(elem);
-				contador++;
-			}
+	elemnull(elem); 
+    emptyList();
+    
+	int contador = 0;
+	T[] save = (T[]) (new Object[data.length]);
+
+	for (int i = 0; i < count; i++) {
+		if (data[i].equals(elem)) { 
+			contador++; 
+		} else {
+			save[i - contador] = data[i];
 		}
-		if (contador==0){
-			throw new NoSuchElementException();
-		}
-		return contador;
+	}
+    count -= contador;
+    for (int i = 0; i < count; i++) {
+        data[i] = save[i];
+    }
+    
+    if (contador == 0) {
+        throw new NoSuchElementException("Elemento no encontrado");
+    }
+    
+    return contador;
 	}
 
 	@Override
@@ -402,6 +415,7 @@ public class ArrayEDList<T> implements IEDList<T> {
 	}
 
 	//METODO NO HECHO!!!!!
+	@SuppressWarnings("unchecked")
 	@Override
 	public IEDList<T> listOfRepeatedElems() {
 		// TODO Auto-generated method stub
@@ -412,6 +426,7 @@ public class ArrayEDList<T> implements IEDList<T> {
 				list.addPos(data[i],pos);
 			}
 			i++;
+			pos++;
 		}
 		return list;
 	}
@@ -420,14 +435,13 @@ public class ArrayEDList<T> implements IEDList<T> {
 	public int countElem(T elem) {
 		// TODO Auto-generated method stub
 		elemnull(elem);
-		int value = -1;
+		int value = 0;
 		for(int i = 0;i<count;i++){
 			if(data[i]!=null && data[i]==elem){
-				value=i;
-				break;
+				value++;
 			}
 		}
-		if(value==-1){
+		if(value==0){
 			throw new NoSuchElementException("El elemento no esta en la lista");
 		}
 		return value;

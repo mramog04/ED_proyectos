@@ -311,9 +311,116 @@ public class ArrayEDListTest {
 	//HECHAR UN VISTAZO, NO BORRA BIEN
 	@Test
 	public void removeAllTest() throws EmptyCollectionException{
-		Assert.assertEquals(2, listaPepe.removeAll(pepe));
-		Assert.assertEquals(lista., 2);
-		Assert.assertEquals("( )", listaPepe.toString());
+		listaPepe.addFirst("PEPE");
+		Assert.assertEquals(1,listaPepe.removeAll("PEPE"));
+		Assert.assertEquals(4, listaPepe.removeAll(pepe));
+		Assert.assertEquals("()", listaPepe.toString());
+	}
+
+	@Test
+	public void listOfRepeatedElemesTest(){
+		listaPepe.addFirst("PEPE");
+		lista.addFirst(pepe);
+		Assert.assertEquals(lista.toString(), listaPepe.listOfRepeatedElems().toString());
+	}
+
+	@Test(expected=NullPointerException.class)
+	public void countElemNull(){
+		lista.countElem(pepeNull);
+	}
+
+	@Test(expected=NoSuchElementException.class)
+	public void countElemNoSuchTest(){
+		lista.countElem(pepe);
+	}
+	@Test
+	public void countElemTest(){
+		Assert.assertEquals(4, listaPepe.countElem(pepe));
+	}
+
+	@Test(expected=NoSuchElementException.class)
+	public void iteratorNoSuchTest(){
+		Iterator<String>  iter=lista.evenPositionsIterator();
+		Assert.assertFalse(iter.hasNext());
+		iter.next();
+	}
+	@Test
+	public void iteratorTest(){
+		listaPepe.addLast("PEPE");
+		Iterator<String>  iter=listaPepe.iterator();
+		Assert.assertTrue(iter.hasNext());
+		Assert.assertEquals("pepe", iter.next());
+		Assert.assertTrue(iter.hasNext());
+		Assert.assertEquals("pepe", iter.next());
+		Assert.assertTrue(iter.hasNext());
+		Assert.assertEquals("pepe", iter.next());
+		Assert.assertTrue(iter.hasNext());
+		Assert.assertEquals("pepe", iter.next());
+		Assert.assertTrue(iter.hasNext());
+		Assert.assertEquals("PEPE", iter.next());
+	}
+
+	@Test(expected=NoSuchElementException.class)
+	public void evenPositionIteratorNoSuchTest(){
+		Iterator<String>  iter=lista.evenPositionsIterator();
+		Assert.assertFalse(iter.hasNext());
+		iter.next();
+	}
+
+	@Test
+	public void evenPositionIteratorTest(){
+		listaPepe.addLast("PEPE");
+		listaPepe.addLast("PEPE");
+		Iterator<String>  iter=listaPepe.evenPositionsIterator();
+		Assert.assertTrue(iter.hasNext());
+		Assert.assertEquals("pepe", iter.next());
+		Assert.assertTrue(iter.hasNext());
+		Assert.assertEquals("pepe", iter.next());
+		Assert.assertTrue(iter.hasNext());
+		Assert.assertEquals("PEPE", iter.next());
+	}
+
+	@Test(expected=NoSuchElementException.class)
+	public void oddPositionsIteratorNoSuchTest(){
+		Iterator<String>  iter=lista.oddPositionsIterator();
+		Assert.assertFalse(iter.hasNext());
+		iter.next();
+	}
+
+	@Test
+	public void oddPositionsIteratorTest(){
+		listaPepe.addLast("PEPE");
+		Iterator<String>  iter=listaPepe.oddPositionsIterator();
+		Assert.assertTrue(iter.hasNext());
+		Assert.assertEquals("pepe", iter.next());
+		Assert.assertTrue(iter.hasNext());
+		Assert.assertEquals("pepe", iter.next());
+		Assert.assertTrue(iter.hasNext());
+		Assert.assertEquals("PEPE", iter.next());
+	}
+
+	@Test(expected=NoSuchElementException.class)
+	public void oddEvenIteratorNoSuchTest(){
+		Iterator<String>  iter=lista.OddEvenIterator();
+		Assert.assertFalse(iter.hasNext());
+		iter.next();
+	}
+
+	@Test
+	public void oddEvenIteratorTest(){
+		lista.addLast("1");
+		lista.addLast("2");
+		lista.addLast("3");
+		lista.addLast("4");
+		lista.addLast("5");
+		lista.addLast("6");
+		Iterator<String>  iter=lista.OddEvenIterator();
+		Assert.assertEquals("2", iter.next());
+		Assert.assertEquals("4", iter.next());
+		Assert.assertEquals("6", iter.next());
+		Assert.assertEquals("1", iter.next());
+		Assert.assertEquals("3", iter.next());
+		Assert.assertEquals("5", iter.next());
 	}
 }
 	
