@@ -82,7 +82,6 @@ public class ArrayEDList<T> implements IEDList<T> {
 
 		private class ArrayEDListOddEvenIterator<T> implements Iterator<T> {
 			private int current=1;
-			private int a = 0;
 	
 			@Override
 			public boolean hasNext() {
@@ -95,22 +94,15 @@ public class ArrayEDList<T> implements IEDList<T> {
 			@Override
 			public T next() {
 				//TODO	
-				if(!hasNext()){
-					throw new NoSuchElementException();
-				}
-				if(current%2==0){
-					current++;
-				}
-				if(current==count){
-					a=20;
-					current = 0;
-				}
-				if(a==20){
-					current+=2;
-					return (T) data[current-2];
-				}
-				current+=2;
-				return (T) data[current-2];
+			if(!hasNext()){
+				throw new NoSuchElementException();
+			}
+			T element = (T) data[current];
+    		current += 2;
+        	if (current >= count) {
+        		current = 0;
+    		}
+    		return element;
 			}
 			}
 	/// TODO :  AÑADIR OTRAS CLASES PARA LOS OTROS ITERADORES

@@ -40,7 +40,7 @@ public class LinkedEDList<T> implements IEDList<T> {
 		@Override
 		public boolean hasNext() {
 			//TODO
-			return current.next != null;
+			return current != null;
 		}
 
 		@Override
@@ -69,7 +69,7 @@ public class LinkedEDList<T> implements IEDList<T> {
 		@Override
 		public boolean hasNext() {
 			//TODO
-			return current.next.next != null;
+			return current != null && current.next != null;
 		}
 
 		@Override
@@ -78,7 +78,7 @@ public class LinkedEDList<T> implements IEDList<T> {
 			if(!hasNext()){
 				throw new NoSuchElementException("No hay siguiente elemento");
 			}
-			T elem = current.elem;
+			T elem = current.next.elem;
 			current = current.next.next;
 			return elem;			
 		}	
@@ -97,7 +97,7 @@ public class LinkedEDList<T> implements IEDList<T> {
 		@Override
 		public boolean hasNext() {
 			//TODO
-			return current.next.next != null;
+			return current.next != null;
 		}
 
 		@Override
@@ -117,15 +117,15 @@ public class LinkedEDList<T> implements IEDList<T> {
 		private Node<T> current;
 		public int value = 0;
 		
-		public OddEvenIterator(Node<T> aux) {
+		public OddEvenIterator(Node<T> front) {
 			//TODO
-			this.current = aux;
+			this.current = front.next;
 		}
 
 		@Override
 		public boolean hasNext() {
 			//TODO
-			return current.next.next != null;
+			return current!= null && current.next != null;
 		}
 
 		@Override
@@ -164,7 +164,7 @@ public class LinkedEDList<T> implements IEDList<T> {
 		}
 
 		private void emptylist() throws EmptyCollectionException{
-			if(front.next==null){
+			if(front==null){
 				throw new EmptyCollectionException("Lista vacia");
 			}
 		}
@@ -230,6 +230,10 @@ public class LinkedEDList<T> implements IEDList<T> {
 		elemnull(elem);
 		Node<T> current = this.front;
 		Node<T> newNode = new Node<T>(elem);
+		if (current == null) {
+			front = newNode;
+			return;
+		}
 		while(current.next!=null){
 			current=current.next;
 		}
@@ -242,6 +246,14 @@ public class LinkedEDList<T> implements IEDList<T> {
 		elemnull(elem);
 		Node<T> last = this.front;
 		Node<T> current = this.front;
+		if (current == null) {
+			addFirst(elem);
+			return;
+		}
+		if(current.next==null){
+			addLast(elem);
+			return;
+		}
 		Node<T> newNode = new Node<T>(elem);
 		while(last.next!=null){
 			last=last.next;
@@ -257,8 +269,19 @@ public class LinkedEDList<T> implements IEDList<T> {
 	public void addPos(T elem, int position) {
 		// TODO 
 		elemnull(elem);
+		if(position<=0){
+			throw new IllegalArgumentException();
+		}
 		Node<T> nextNode = this.front;
 		Node<T> current = this.front;
+		if(position==1){
+			addFirst(elem);
+			return;
+		}
+		if (position>size()){
+			addLast(elem);
+			return;
+		}
 		Node<T> newNode = new Node<T>(elem);
 		for(int i = position-1;i>0;i--){
 			nextNode=nextNode.next;
@@ -276,13 +299,14 @@ public class LinkedEDList<T> implements IEDList<T> {
 	    emptylist();
 		Node<T> current = this.front;
 		Node<T> nextNode = current.next;
-		this.front.next=nextNode;
+		this.front=nextNode;
 		return current.elem;
 	}
 
 	@Override
 	public T removelast() throws EmptyCollectionException {
 		// TODO 
+		emptylist();
 		Node<T> current = this.front;
 		for(int i = size()-2;i>0;i--){
 			current=current.next;
@@ -295,6 +319,7 @@ public class LinkedEDList<T> implements IEDList<T> {
 	@Override
 	public T removePenult() throws EmptyCollectionException {
 		// TODO 
+		emptylist();
 		Node<T> current = this.front;
 		Node<T> penult;
 		Node<T> last;
@@ -311,7 +336,7 @@ public class LinkedEDList<T> implements IEDList<T> {
 	@Override
 	public T getElemPos(int position) {
 		// TODO 
-		if(position > size()){
+		if(position > size() || position < 1){
 			throw new IllegalArgumentException("La lista no tiene tantos elementos");
 		}
 		Node<T> current = this.front;
@@ -388,25 +413,29 @@ public class LinkedEDList<T> implements IEDList<T> {
 			// TODO Auto-generated method stub
 			elemnull(elem);
 			emptylist();
-			Node<T> previusNode = this.front;
-			Node<T> current = previusNode.next;
-		    Node<T> nextNode = current.next;
-			Node<T> Node = new Node<T>(elem);
+		
+			Node<T> prevNode = null;
+			Node<T> currentNode = front;
 			int contador = 0;
-			if(previusNode == Node){
-				previusNode = previusNode.next;
-				current = current.next;
-				nextNode = nextNode.next;
-				contador = 1;
-			}else{
-				contador = 1;
-				while(current != Node){
-					previusNode=current;
-					current=nextNode;
-					nextNode=nextNode.next;
-					contador++;
+			boolean borrado = false;
+		
+			while (currentNode != null && !borrado) {
+				if (currentNode.elem.equals(elem)) { 
+					if (prevNode == null) { 
+						front = currentNode.next; 
+					} else {
+						prevNode.next = currentNode.next; 
+					}
+					currentNode = currentNode.next; 
+					borrado = true;
+				} else {
+					prevNode = currentNode; 
+					currentNode = currentNode.next;
 				}
-				previusNode.next=nextNode;
+				contador++;
+			}
+			if(!borrado){
+				throw new NoSuchElementException();
 			}
 			return contador;
 		}
@@ -422,8 +451,7 @@ public class LinkedEDList<T> implements IEDList<T> {
 		@Override
 		public void clear() {
 			// TODO Auto-generated method stub
-			Node<T> current = this.front;
-			current.next=null;	
+			this.front = null;	
 		}
 
 		@Override
