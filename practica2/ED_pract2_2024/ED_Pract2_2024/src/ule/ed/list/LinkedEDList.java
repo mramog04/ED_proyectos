@@ -180,11 +180,12 @@ public class LinkedEDList<T> implements IEDList<T> {
 			return false;
 		}
 		
-		private int countOccurrences(T data) {
+		private int countOccurrences(T elem) {
+			elemnull(elem);
 			int count = 0;
 			Node<T> current = this.front;
 			while (current != null) {
-				if (current.elem.equals(data)) {
+				if (current.elem.equals(elem)) {
 					count++;
 				}
 				current = current.next;
@@ -353,14 +354,25 @@ public class LinkedEDList<T> implements IEDList<T> {
 		Node<T> current = this.front;
 		Node<T> Node = new Node<T>(elem);
 		int contador = 0;
-		while(current != Node){
-			current = current.next;
+		int mayorPos=0;
+		boolean encontrado = false;
+		while(current != null && current.next!=null){
 			contador++;
+			if(current.elem.equals(elem)){
+				mayorPos=contador;
+				encontrado=true;
+			}
+			current = current.next;
 		}
-		if(contador==0){
+		if(current.elem.equals(elem)){
+			contador++;
+			mayorPos=contador;
+			encontrado=true;
+		}
+		if(!encontrado){
 			throw new NoSuchElementException("El elemento no esta en la lista");
 		}
-		return contador;
+		return mayorPos;
 	 }
 	
 
@@ -369,7 +381,7 @@ public class LinkedEDList<T> implements IEDList<T> {
 		// TODO 	
 		elemnull(elem);
 		emptylist();
-		int contador = 0;
+		/*int contador = 0;
 		Node<T> previusNode = this.front;
 		Node<T> current = previusNode.next;
 		Node<T> nextNode = current.next;
@@ -387,8 +399,34 @@ public class LinkedEDList<T> implements IEDList<T> {
 				contador++;
 			}
 		}
+		return contador;*/
+		elemnull(elem);
+		emptylist();
+	
+		Node<T> prevNode = null;
+		Node<T> currentNode = front;
+		int contador = 0;
+		boolean borrado = false;
+	
+		while (currentNode != null) {
+			if (currentNode.elem.equals(elem)) {
+				borrado=true;
+				contador++; 
+				if (prevNode == null) { 
+					front = currentNode.next; 
+				} else {
+					prevNode.next = currentNode.next; 
+				}
+				currentNode = currentNode.next;
+			} else {
+				prevNode = currentNode; 
+				currentNode = currentNode.next;
+			}
+		}
+		if(!borrado){
+			throw new NoSuchElementException();
+		}
 		return contador;
-
 	}
 
 	
@@ -459,15 +497,22 @@ public class LinkedEDList<T> implements IEDList<T> {
 			// TODO Auto-generated method stub
 			elemnull(elem);
 			Node<T> current = this.front;
-			Node<T> Node = new Node<T>(elem);
-			int contador = 0;
-			while(current!=Node){
+			int contador = 1;
+			boolean encontrado = false;
+			while(current!=null && !current.elem.equals(elem)){
 				current = current.next;
 				contador++;
+			}
+			if(current!=null && current.elem.equals(elem)){
+				encontrado = true;
+			}
+			if(!encontrado){
+				throw new NoSuchElementException();
 			}
 			return contador;
 		}
 
+		//Repasar no funciona el return
 		@SuppressWarnings("unchecked")
 		@Override
 		public IEDList<T> listOfRepeatedElems() {
@@ -486,17 +531,7 @@ public class LinkedEDList<T> implements IEDList<T> {
 
 		@Override
 		public int countElem(T elem) {
-			// TODO Auto-generated method stub
-			Node<T> current = this.front;
-			Node<T> Node = new Node<T>(elem);
-			int contador = 0;
-			for(int i = size()-1;i>0;i++){
-				if(current==Node){
-					contador++;
-				}
-				current=current.next;
-			}
-			return contador;
+			return countOccurrences(elem);
 		}
 
 		@Override

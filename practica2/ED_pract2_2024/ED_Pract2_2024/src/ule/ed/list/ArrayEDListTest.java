@@ -308,7 +308,6 @@ public class ArrayEDListTest {
 		lista.removeAll(pepe);
 	}
 
-	//HECHAR UN VISTAZO, NO BORRA BIEN
 	@Test
 	public void removeAllTest() throws EmptyCollectionException{
 		listaPepe.addFirst("PEPE");

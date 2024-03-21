@@ -255,6 +255,98 @@ public class LinkedEDListTest {
 		Assert.assertEquals("4", list.getElemPos(4));
 	}
 
+	@Test(expected=NullPointerException.class)
+	public void getPosFirstNullTest(){
+		list.getPosFirst(numNull);
+	}
+
+	@Test(expected=NoSuchElementException.class)
+	public void getPosFirstNoSuchTest(){
+		list.getPosFirst(num);
+	}
+
 	@Test
-	public void 
+	public void getPosFirstTest(){
+		Assert.assertEquals(1, list.getPosFirst("1"));
+		Assert.assertEquals(2,list.getPosFirst("2"));
+		Assert.assertEquals(3,list.getPosFirst("3"));
+		Assert.assertEquals(4,list.getPosFirst("4"));
+	}
+
+	@Test(expected=NullPointerException.class)
+	public void getPosLastNullTest(){
+		list.getPosLast(numNull);
+	}
+
+	@Test(expected=NoSuchElementException.class)
+	public void getPosLastNoSuch(){
+		list.getPosLast(num);
+	}
+
+	@Test
+	public void getPosLastTest(){
+		Assert.assertEquals(1, list.getPosLast("1"));
+		Assert.assertEquals(2, list.getPosLast("2"));
+		Assert.assertEquals(3, list.getPosLast("3"));
+		Assert.assertEquals(4, list.getPosLast("4"));
+		list.addLast(num);
+		Assert.assertEquals(5, list.getPosLast(num));
+	}
+
+	@Test(expected=NullPointerException.class)
+	public void removeAllNull() throws EmptyCollectionException{
+		list.removeAll(numNull);
+	}
+
+	@Test(expected=EmptyCollectionException.class)
+	public void removeAllEmptyTest() throws EmptyCollectionException{
+		emptyList.removeAll(num);
+	}
+
+	@Test(expected=NoSuchElementException.class)
+	public void removeAllNoSuchTest() throws EmptyCollectionException{
+		list.removeAll(num);
+	}
+
+
+	@Test
+	public void removeAllTest() throws EmptyCollectionException{
+		Assert.assertEquals(1, list.removeAll("1"));
+		Assert.assertEquals(1, list.removeAll("2"));
+		Assert.assertEquals(1, list.removeAll("3"));
+		Assert.assertEquals(1, list.removeAll("4"));
+		emptyList.addFirst(num);
+		emptyList.addFirst(num);
+		emptyList.addFirst(num);
+		emptyList.addFirst(num);
+		Assert.assertEquals(4, emptyList.removeAll(num));
+	}
+
+	//repasar no funciona
+	@Test
+	public void listOfRepeatedElemsTest(){
+		emptyList.addFirst(num);
+		emptyList.addFirst(num);
+		emptyList.addFirst("NUM");
+		emptyList.addFirst("NUM");
+		Assert.assertEquals("(num NUM )", emptyList.listOfRepeatedElems().toString());
+	}
+
+	@Test(expected=NullPointerException.class)
+	public void countElemNullTest(){
+		list.countElem(numNull);
+	}
+
+	@Test
+	public void countElemTest(){
+		Assert.assertEquals(1, list.countElem("1"));
+		emptyList.addFirst(num);
+		emptyList.addFirst(num);
+		emptyList.addFirst(num);
+		emptyList.addFirst(num);
+		Assert.assertEquals(4, emptyList.countElem(num));
+	}
+
+	//falan el test de odditerator y oddeveniterator y corregir el otro test que no funciona
+	
 }
