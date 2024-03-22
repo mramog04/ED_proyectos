@@ -361,16 +361,18 @@ public class LinkedEDListTest {
 
 	@Test
 	public void oddEvenIteratorTest(){
+		list.addLast("5");
 		Iterator<String> iter = list.OddEvenIterator();
 		Assert.assertTrue(iter.hasNext());
 		Assert.assertEquals("1", iter.next());
 		Assert.assertTrue(iter.hasNext());
 		Assert.assertEquals("3", iter.next());
 		Assert.assertTrue(iter.hasNext());
+		Assert.assertEquals("5", iter.next());
+		Assert.assertTrue(iter.hasNext());
 		Assert.assertEquals("2", iter.next());
 		Assert.assertTrue(iter.hasNext());
 		Assert.assertEquals("4", iter.next());
-
 	}
 
 	//falan el test de odditerator y oddeveniterator y corregir el otro test que no funciona

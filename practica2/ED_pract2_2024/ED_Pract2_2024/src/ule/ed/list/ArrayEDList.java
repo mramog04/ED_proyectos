@@ -406,7 +406,6 @@ public class ArrayEDList<T> implements IEDList<T> {
 		
 	}
 
-	//METODO NO HECHO!!!!!
 	@SuppressWarnings("unchecked")
 	@Override
 	public IEDList<T> listOfRepeatedElems() {

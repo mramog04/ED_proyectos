@@ -120,6 +120,7 @@ public class LinkedEDList<T> implements IEDList<T> {
 		// declarar atributos del iterador
 		private Node<T> current;
 		private Node<T> save;
+		private int value = 0;
 		
 		public OddEvenIterator(Node<T> front) {
 			//TODO
@@ -134,47 +135,25 @@ public class LinkedEDList<T> implements IEDList<T> {
 			return current!= null;
 		}
 
+		// hay que usar una division de resto, ya que cuando me muevo en un size(par) en el if hace falta comprobar current.next y current.next.next, en cambio cuando es impar solo hace falta current.next, hay que hacer eso y ya deberia funcionar.
 		@Override
 		public T next() {
-			/*T elem = current.elem;
-			while(value==0){
-				if(hasNext()){
-				if(current.next==null){
-					value=1;
-					current=save;
-				}else{
-					current = current.next.next;
-				}
-				return elem;
-			}	
-			}
-			while(value==1){
-				if(hasNext()){
-					elem=current.elem;
+			T elem = current.elem;
+			if(value==0){
+				if(current.next!=null && current.next.next!=null){
 					current=current.next.next;
-					return elem;
 				}else{
-					value=0;
+					current=save.next;
+					value=1;
 				}
 			}
-			return elem;
-			if(!hasNext()){
-				throw new NoSuchElementException();
+			if(value == 1){
+				if(current.next!=null && current.next.next!=null){
+					current=current.next.next;
+				}else{
+					throw new NoSuchElementException();
+				}
 			}
-			T elem = current.elem;
-			current = current.next!=null ? current.next.next:save.next;
-			return elem;*/
-			if (!hasNext()) {
-				throw new NoSuchElementException();
-			}
-		
-			T elem = current.elem;
-			if (current.next != null) {
-				current = current.next.next; // Avanzar al siguiente elemento par
-			} else {
-				current = save.next; // Avanzar al siguiente elemento impar
-			}
-		
 			return elem;
 		}	
 	}
