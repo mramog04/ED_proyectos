@@ -97,7 +97,7 @@ public class LinkedEDList<T> implements IEDList<T> {
 		@Override
 		public boolean hasNext() {
 			//TODO
-			return current.next != null;
+			return current != null;
 		}
 
 		@Override
@@ -107,7 +107,11 @@ public class LinkedEDList<T> implements IEDList<T> {
 				throw new NoSuchElementException("No hay siguiente elemento");
 			}
 			T elem = current.elem;
+			if(current.next==null){
+				current = current.next;
+			}else{
 			current = current.next.next;
+			}
 			return elem;			
 		}	
 	}
@@ -115,33 +119,35 @@ public class LinkedEDList<T> implements IEDList<T> {
 	private class OddEvenIterator<T> implements Iterator<T> {
 		// declarar atributos del iterador
 		private Node<T> current;
-		public int value = 0;
+		private Node<T> save;
 		
 		public OddEvenIterator(Node<T> front) {
 			//TODO
-			this.current = front.next;
+			this.current = front;
+			this.save = front;
+
 		}
 
 		@Override
 		public boolean hasNext() {
 			//TODO
-			return current!= null && current.next != null;
+			return current!= null;
 		}
 
 		@Override
 		public T next() {
-			T elem = current.elem;
-			Node<T> save = current.next;
+			/*T elem = current.elem;
 			while(value==0){
 				if(hasNext()){
-					elem=current.elem;
-					current=current.next.next;
-					return elem;
+				if(current.next==null){
+					value=1;
+					current=save;
 				}else{
-					value = 1;
+					current = current.next.next;
 				}
+				return elem;
+			}	
 			}
-			current=save;
 			while(value==1){
 				if(hasNext()){
 					elem=current.elem;
@@ -151,6 +157,24 @@ public class LinkedEDList<T> implements IEDList<T> {
 					value=0;
 				}
 			}
+			return elem;
+			if(!hasNext()){
+				throw new NoSuchElementException();
+			}
+			T elem = current.elem;
+			current = current.next!=null ? current.next.next:save.next;
+			return elem;*/
+			if (!hasNext()) {
+				throw new NoSuchElementException();
+			}
+		
+			T elem = current.elem;
+			if (current.next != null) {
+				current = current.next.next; // Avanzar al siguiente elemento par
+			} else {
+				current = save.next; // Avanzar al siguiente elemento impar
+			}
+		
 			return elem;
 		}	
 	}
@@ -516,7 +540,7 @@ public class LinkedEDList<T> implements IEDList<T> {
 		@SuppressWarnings("unchecked")
 		@Override
 		public IEDList<T> listOfRepeatedElems() {
-			LinkedList<T> repeatedList = new LinkedList<>();
+			/**LinkedList<T> repeatedList = new LinkedList<>();
     		Node<T> current = front;
 
     		while (current != null) {
@@ -526,7 +550,17 @@ public class LinkedEDList<T> implements IEDList<T> {
         		current = current.next;
     		}
 
-    		return  (IEDList<T>) repeatedList;
+    		return  (IEDList<T>) repeatedList;*/
+			LinkedEDList<T> list = new LinkedEDList<T>();
+			Node<T> current = front;
+
+			while(current!=null){
+				if(!list.contains(current.elem) && countOccurrences(current.elem) > 1){
+					list.addLast(current.elem);
+				}
+				current=current.next;
+			}
+			return list;
 		}
 
 		@Override

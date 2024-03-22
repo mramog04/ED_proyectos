@@ -329,7 +329,7 @@ public class LinkedEDListTest {
 		emptyList.addFirst(num);
 		emptyList.addFirst("NUM");
 		emptyList.addFirst("NUM");
-		Assert.assertEquals("(num NUM )", emptyList.listOfRepeatedElems().toString());
+		Assert.assertEquals("(NUM num )", emptyList.listOfRepeatedElems().toString());
 	}
 
 	@Test(expected=NullPointerException.class)
@@ -345,6 +345,32 @@ public class LinkedEDListTest {
 		emptyList.addFirst(num);
 		emptyList.addFirst(num);
 		Assert.assertEquals(4, emptyList.countElem(num));
+	}
+
+	@Test
+	public void oddPositionsIteratorTest(){
+		list.addLast("5");
+		Iterator<String> iter = list.oddPositionsIterator();
+		Assert.assertTrue(iter.hasNext());
+		Assert.assertEquals("1", iter.next());
+		Assert.assertTrue(iter.hasNext());
+		Assert.assertEquals("3", iter.next());
+		Assert.assertTrue(iter.hasNext());
+		Assert.assertEquals("5", iter.next());
+	}
+
+	@Test
+	public void oddEvenIteratorTest(){
+		Iterator<String> iter = list.OddEvenIterator();
+		Assert.assertTrue(iter.hasNext());
+		Assert.assertEquals("1", iter.next());
+		Assert.assertTrue(iter.hasNext());
+		Assert.assertEquals("3", iter.next());
+		Assert.assertTrue(iter.hasNext());
+		Assert.assertEquals("2", iter.next());
+		Assert.assertTrue(iter.hasNext());
+		Assert.assertEquals("4", iter.next());
+
 	}
 
 	//falan el test de odditerator y oddeveniterator y corregir el otro test que no funciona
