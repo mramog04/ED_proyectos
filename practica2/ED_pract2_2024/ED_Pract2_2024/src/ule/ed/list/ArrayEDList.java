@@ -206,6 +206,7 @@ public class ArrayEDList<T> implements IEDList<T> {
 		count++;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void addPenult(T elem) {
 		// TODO	
@@ -217,12 +218,15 @@ public class ArrayEDList<T> implements IEDList<T> {
 		}else{
 			save = (T[])(new Object[data.length]);
 		}
+		if(size()==0 || size()==1){
+			addFirst(elem);
+			return;
+		}
 		save = data;
 		save[count]=elem;
 		save[count+1]=data[count];
 		count++;
 		data = save;
-
 	}
 
 	@Override

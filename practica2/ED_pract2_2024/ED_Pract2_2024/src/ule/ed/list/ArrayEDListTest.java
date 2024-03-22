@@ -421,6 +421,22 @@ public class ArrayEDListTest {
 		Assert.assertEquals("3", iter.next());
 		Assert.assertEquals("5", iter.next());
 	}
+
+	//Se supone que en los test de agora hay un test con este nombre que falla,da nosuchElemenException,
+	@Test
+	public void countElemAllPosTest(){
+		Assert.assertEquals(4, listaPepe.countElem(pepe));
+	}
+
+	//hay un test con este nombre que tambien falla, no entiendo que pide
+	@Test
+	public void AddPenult_expandCapacity(){
+		lista.addPenult("2");
+		lista.addPenult("3");
+		Assert.assertEquals("(3 2 )", lista.toString());
+		lista.addPenult("4");
+		Assert.assertEquals("(3 4 2 )", lista.toString());
+	}
 }
 	
 	

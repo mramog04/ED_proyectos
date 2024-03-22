@@ -153,12 +153,20 @@ public class LinkedEDListTest {
 	}
 	
 	@Test
-	public void addPenult(){
+	public void addPenultTest(){
 		emptyList.addPenult(num);
 		Assert.assertEquals("(num )", emptyList.toString());
 		emptyList.addPenult(num);
 		emptyList.addPenult(num);
 		Assert.assertEquals("(num num num )", emptyList.toString());
+	}
+
+	@Test
+	public void addPenult_caso2(){
+		emptyList.addPenult(num);
+		Assert.assertEquals("(num )", emptyList.toString());
+		emptyList.addPenult("NUM");
+		Assert.assertEquals("(NUM num )", emptyList.toString());
 	}
 
 	@Test(expected=NullPointerException.class)
@@ -332,6 +340,12 @@ public class LinkedEDListTest {
 		Assert.assertEquals("(NUM num )", emptyList.listOfRepeatedElems().toString());
 	}
 
+	//@Test(expected=IllegalArgumentException.class)
+	//public void listOfRepeatedElemsTest_caso2(){
+		
+	//}
+
+
 	@Test(expected=NullPointerException.class)
 	public void countElemNullTest(){
 		list.countElem(numNull);
@@ -359,6 +373,12 @@ public class LinkedEDListTest {
 		Assert.assertEquals("5", iter.next());
 	}
 
+	@Test(expected=NoSuchElementException.class)		
+	public void oddEvenIteratorNoSeuchtest(){
+		Iterator<String> iter = emptyList.OddEvenIterator();
+		iter.next();
+	}
+
 	@Test
 	public void oddEvenIteratorTest(){
 		list.addLast("5");
@@ -375,6 +395,5 @@ public class LinkedEDListTest {
 		Assert.assertEquals("4", iter.next());
 	}
 
-	//falan el test de odditerator y oddeveniterator y corregir el otro test que no funciona
 	
 }

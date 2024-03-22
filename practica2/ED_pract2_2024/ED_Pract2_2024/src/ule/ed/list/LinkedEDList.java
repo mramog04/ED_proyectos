@@ -6,6 +6,8 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
+import javax.security.auth.Subject;
+
 public class LinkedEDList<T> implements IEDList<T> {
 
 	//	referencia al primer  de la lista
@@ -121,6 +123,7 @@ public class LinkedEDList<T> implements IEDList<T> {
 		private Node<T> current;
 		private Node<T> save;
 		private int value = 0;
+		private boolean fin = false;
 		
 		public OddEvenIterator(Node<T> front) {
 			//TODO
@@ -135,23 +138,37 @@ public class LinkedEDList<T> implements IEDList<T> {
 			return current!= null;
 		}
 
-		// hay que usar una division de resto, ya que cuando me muevo en un size(par) en el if hace falta comprobar current.next y current.next.next, en cambio cuando es impar solo hace falta current.next, hay que hacer eso y ya deberia funcionar.
+		// hay que usar una division de resto, ya que cuando me muevo en un size(par) en el if hace falta comprobar current.next y current.next.next, en cambio cuando es impar solo hace falta current.next, hay que hacer eso y ya deberia funcionar.++++++++
 		@Override
 		public T next() {
+			if(size()==0){
+				throw new NoSuchElementException();
+			}
 			T elem = current.elem;
-			if(value==0){
+			if(fin==true){
+				throw new NoSuchElementException();
+			}
+			if(value == 1){
 				if(current.next!=null && current.next.next!=null){
+					current=current.next.next;
+				}else{
+					fin = true;
+				}
+			}
+			if(size()%2==0 && value==0){
+				if(current.next!=null){
 					current=current.next.next;
 				}else{
 					current=save.next;
 					value=1;
 				}
 			}
-			if(value == 1){
+			if(size()%2!=0 && value==0){
 				if(current.next!=null && current.next.next!=null){
 					current=current.next.next;
 				}else{
-					throw new NoSuchElementException();
+					current=save.next;
+					value=1;
 				}
 			}
 			return elem;
@@ -255,7 +272,7 @@ public class LinkedEDList<T> implements IEDList<T> {
 			return;
 		}
 		if(current.next==null){
-			addLast(elem);
+			addFirst(elem);
 			return;
 		}
 		Node<T> newNode = new Node<T>(elem);
@@ -384,27 +401,6 @@ public class LinkedEDList<T> implements IEDList<T> {
 		// TODO 	
 		elemnull(elem);
 		emptylist();
-		/*int contador = 0;
-		Node<T> previusNode = this.front;
-		Node<T> current = previusNode.next;
-		Node<T> nextNode = current.next;
-		Node<T> Node = new Node<T>(elem);
-		while(previusNode == Node){
-			previusNode = previusNode.next;
-			current = current.next;
-			nextNode = nextNode.next;
-		}
-		for(int i = size();i>0;i--){
-			if(current==Node){
-				current=nextNode;
-				previusNode.next=current;
-				nextNode=nextNode.next;
-				contador++;
-			}
-		}
-		return contador;*/
-		elemnull(elem);
-		emptylist();
 	
 		Node<T> prevNode = null;
 		Node<T> currentNode = front;
@@ -516,20 +512,8 @@ public class LinkedEDList<T> implements IEDList<T> {
 		}
 
 		//Repasar no funciona el return
-		@SuppressWarnings("unchecked")
 		@Override
 		public IEDList<T> listOfRepeatedElems() {
-			/**LinkedList<T> repeatedList = new LinkedList<>();
-    		Node<T> current = front;
-
-    		while (current != null) {
-        		if (!repeatedList.contains(current.elem) && countOccurrences(current.elem) > 1) {
-            		repeatedList.add(current.elem);
-        		}
-        		current = current.next;
-    		}
-
-    		return  (IEDList<T>) repeatedList;*/
 			LinkedEDList<T> list = new LinkedEDList<T>();
 			Node<T> current = front;
 
