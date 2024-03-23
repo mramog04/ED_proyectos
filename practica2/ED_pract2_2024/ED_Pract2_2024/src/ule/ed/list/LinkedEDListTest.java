@@ -395,5 +395,36 @@ public class LinkedEDListTest {
 		Assert.assertEquals("4", iter.next());
 	}
 
+	@Test
+	public void oddEvenIteratorParTest(){
+		Iterator<String> iter = list.OddEvenIterator();
+		Assert.assertTrue(iter.hasNext());
+		Assert.assertEquals("1", iter.next());
+		Assert.assertTrue(iter.hasNext());
+		Assert.assertEquals("3", iter.next());
+		Assert.assertTrue(iter.hasNext());
+		Assert.assertEquals("2", iter.next());
+		Assert.assertTrue(iter.hasNext());
+		Assert.assertEquals("4", iter.next());
+	}
+	@Test
+	public void removePenult2Elem() throws EmptyCollectionException{
+		emptyList.addFirst("1");
+		emptyList.addLast("2");
+		Assert.assertEquals("1", emptyList.removePenult());
+	}
+	
+	@Test
+	public void removeLastTest_caso2() throws EmptyCollectionException{
+		emptyList.addFirst("2");
+		emptyList.removelast();
+		Assert.assertEquals("()", emptyList.toString());
+	}
+
+	@Test(expected = NoSuchElementException.class)
+	public void removePenult_1Elem() throws EmptyCollectionException{
+		emptyList.addFirst("1");
+		emptyList.removePenult();
+	}
 	
 }

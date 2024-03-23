@@ -480,6 +480,62 @@ public class ArrayEDListTest {
 		listaPepe.addLast("1");
 		Assert.assertEquals(5, listaPepe.getPosLast("1"));
 	}
+
+	//Test de agora salta que necesita la excepcion IllegalArgument...
+	@Test(expected = IllegalArgumentException.class)
+	public void getElemPosCeroNoVacia(){
+		lista.addPos(pepe, 0);
+		lista.getElemPos(0);
+	}
+
+	@Test
+	public void removePenultToOneTest() throws EmptyCollectionException{
+		lista.addFirst("1");
+		lista.addLast("2");
+		lista.addLast("3");
+		lista.addLast("4");
+		lista.addLast("5");
+		Assert.assertEquals("4",lista.removePenult());
+		Assert.assertEquals("(1 2 3 5 )", lista.toString());
+		lista.removePenult();
+		Assert.assertEquals("(1 2 5 )", lista.toString());
+		lista.removePenult();
+		Assert.assertEquals("(1 5 )", lista.toString());
+		lista.removePenult();
+		Assert.assertEquals("(5 )", lista.toString());
+	}
+
+	//Test de agora con este nombre no pasa
+	@Test
+	public void removeElemLastPos() throws EmptyCollectionException{
+		lista.addFirst("1");
+		lista.addLast("2");
+		lista.addLast("3");
+		lista.addLast("4");
+		lista.addLast("5");
+		Assert.assertEquals("5", lista.removelast());
+	}
+	
+
+	/*@Test
+	public void evenOddIteratorTest(){
+		lista.addFirst("1");
+		lista.addLast("2");
+		lista.addLast("3");
+		lista.addLast("4");
+		lista.addLast("5");
+		Iterator<String> iter = lista.OddEvenIterator();
+		Assert.assertTrue(iter.hasNext());
+		Assert.assertEquals("1", iter.next());
+		Assert.assertTrue(iter.hasNext());
+		Assert.assertEquals("3", iter.next());
+		Assert.assertTrue(iter.hasNext());
+		Assert.assertEquals("5", iter.next());
+		Assert.assertTrue(iter.hasNext());
+		Assert.assertEquals("2", iter.next());
+		Assert.assertTrue(iter.hasNext());
+		Assert.assertEquals("4", iter.next());
+	}*/
 }
 	
 	

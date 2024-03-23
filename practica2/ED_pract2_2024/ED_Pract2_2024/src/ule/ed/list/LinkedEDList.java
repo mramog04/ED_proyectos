@@ -156,7 +156,7 @@ public class LinkedEDList<T> implements IEDList<T> {
 				}
 			}
 			if(size()%2==0 && value==0){
-				if(current.next!=null){
+				if(current.next.next!=null){
 					current=current.next.next;
 				}else{
 					current=save.next;
@@ -329,6 +329,9 @@ public class LinkedEDList<T> implements IEDList<T> {
 		// TODO 
 		emptylist();
 		Node<T> current = this.front;
+		if(size()==1){
+			return removeFirst();
+		}
 		for(int i = size()-2;i>0;i--){
 			current=current.next;
 		}
@@ -344,6 +347,12 @@ public class LinkedEDList<T> implements IEDList<T> {
 		Node<T> current = this.front;
 		Node<T> penult;
 		Node<T> last;
+		if (size()==1){
+			throw new NoSuchElementException();
+		}
+		if(size()==2){
+			return removeFirst();
+		}
 		for(int i = size()-3;i>0;i--){
 			current=current.next;
 		}

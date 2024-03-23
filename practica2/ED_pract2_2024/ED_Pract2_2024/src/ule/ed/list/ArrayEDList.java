@@ -1,5 +1,6 @@
 package ule.ed.list;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -231,7 +232,6 @@ public class ArrayEDList<T> implements IEDList<T> {
 	public void addPos(T elem, int position) {
 		// TODO 
 		elemnull(elem);
-		T[] save = (T[])(new Object[data.length*2]);
 		if(position<=0){
 			throw new IllegalArgumentException();
 		}
@@ -239,15 +239,20 @@ public class ArrayEDList<T> implements IEDList<T> {
 			addLast(elem);
 			return;
 		}
+		if(position==1){
+			addFirst(elem);
+			return;
+		}
 		if(!(contains(elem)) && size()==data.length){
 			expandCapacity();
 		}
-		save = data;
-		for(int i = position-1;i<count;i++){
-			save[i+1]=data[i];
+		T[] save = Arrays.copyOf(data, data.length*2);
+		for(int i = size();i>= position;i--){
+			save[i]=save[i-1];
 		}
-		save[position]=elem;
+		save[position-1]=elem;
 		data = save;
+		count++;
 	}
 	
 
@@ -296,7 +301,9 @@ public class ArrayEDList<T> implements IEDList<T> {
 			return value;
 		}
 		T[] save = (T[]) (new Object[data.length]);
-		System.arraycopy(data, 0, save, 0, size() - 1);
+		System.arraycopy(data, 0, save, 0, size()-1);
+		save[size()-2]=data[size()-1];
+		save[size()]=null;
 		data = save;
 		count--; 
     	return value;
