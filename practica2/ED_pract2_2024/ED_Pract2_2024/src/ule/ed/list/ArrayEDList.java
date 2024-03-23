@@ -147,9 +147,7 @@ public class ArrayEDList<T> implements IEDList<T> {
 	private void expandCapacity(){
 
 		T[] larger = (T[])(new Object[data.length*2]);
-		for(int i = 0;i<data.length;i++){
-			larger[i]=this.data[i];
-		}
+		System.arraycopy(data, 0, larger, 0, size());
 		this.data=larger;
 	}
 	
@@ -222,11 +220,11 @@ public class ArrayEDList<T> implements IEDList<T> {
 			addFirst(elem);
 			return;
 		}
-		save = data;
-		save[count]=elem;
-		save[count+1]=data[count];
-		count++;
-		data = save;
+		System.arraycopy(data, 0, save, 0, size() - 1);
+    	save[size() - 1] = elem; 
+   		save[size()] = data[size() - 1]; 
+    	count++;
+    	data = save;
 	}
 
 	@Override
@@ -239,6 +237,7 @@ public class ArrayEDList<T> implements IEDList<T> {
 		}
 		if(position>size()){
 			addLast(elem);
+			return;
 		}
 		if(!(contains(elem)) && size()==data.length){
 			expandCapacity();
@@ -272,27 +271,32 @@ public class ArrayEDList<T> implements IEDList<T> {
 	public T removelast() throws EmptyCollectionException {
 		// TODO 
 		emptyList();
-		T value = data[count-1];
-		count--;
-		value=data[count];
-		for(int i = 0;i<count;i++){
-			data[i]=data[i+1];
+		T value;
+		if(size()==1){
+			value = data[count];
+			data[count]=null;
+			return value;
 		}
+		value = data[count-1];
+		data[size()-1]=null;
+		count--;
 		return value;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public T removePenult() throws EmptyCollectionException {
 		emptyList();
 		if(size()==1){
 			throw new NoSuchElementException();
 		}
-		T value = data[count - 2];
-		T[] save = (T[]) (new Object[data.length]);
-		for (int i = 0; i < count - 1; i++) {
-			save[i] = data[i];
+		T value = data[size()-2];
+		if(size()==2){
+			removeFirst();
+			return value;
 		}
-		save[count - 1] = null;
+		T[] save = (T[]) (new Object[data.length]);
+		System.arraycopy(data, 0, save, 0, size() - 1);
 		data = save;
 		count--; 
     	return value;
@@ -303,6 +307,7 @@ public class ArrayEDList<T> implements IEDList<T> {
 	public int removeElem(T elem) throws EmptyCollectionException {
 		// TODO 
 		emptyList();
+		elemnull(elem);
 		int resultado=-1;
 		for(int i = 0;i<count;i++){
 			if(data[i].equals(elem)){
@@ -326,9 +331,13 @@ public class ArrayEDList<T> implements IEDList<T> {
 	@Override
 	public T getElemPos(int position) {
 		// TODO 
+		if(size()==0){
+			throw new IllegalArgumentException("Posicion invalida");
+		}
 		if(position<0||position>size()){
 			throw new IllegalArgumentException("Posicion invalida");
 		}
+		
 		return data[position];
 	}
 
@@ -338,7 +347,7 @@ public class ArrayEDList<T> implements IEDList<T> {
 		elemnull(elem);
 		for(int i = count;i>0;i--){
 			if (data[i]==elem){
-				return i;
+				return i+1;
 			}
 		}
 		throw new NoSuchElementException();
@@ -435,9 +444,6 @@ public class ArrayEDList<T> implements IEDList<T> {
 			if(data[i]!=null && data[i]==elem){
 				value++;
 			}
-		}
-		if(value==0){
-			throw new NoSuchElementException("El elemento no esta en la lista");
 		}
 		return value;
 	}

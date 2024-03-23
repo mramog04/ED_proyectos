@@ -328,10 +328,7 @@ public class ArrayEDListTest {
 		lista.countElem(pepeNull);
 	}
 
-	@Test(expected=NoSuchElementException.class)
-	public void countElemNoSuchTest(){
-		lista.countElem(pepe);
-	}
+	
 	@Test
 	public void countElemTest(){
 		Assert.assertEquals(4, listaPepe.countElem(pepe));
@@ -436,6 +433,52 @@ public class ArrayEDListTest {
 		Assert.assertEquals("(3 2 )", lista.toString());
 		lista.addPenult("4");
 		Assert.assertEquals("(3 4 2 )", lista.toString());
+	}
+
+	@Test
+	public void removePenult_2elemTest() throws EmptyCollectionException{
+		lista.addFirst("2");
+		lista.addLast("3");
+		Assert.assertEquals("2", lista.removePenult());
+		Assert.assertEquals("(3 )", lista.toString());
+	}
+
+	@Test(expected=IllegalArgumentException.class)
+	public void getElemPos_PosCeroVacia(){
+		lista.getElemPos(1);
+	}
+
+	@Test
+	public void removeLastTest_caso2() throws EmptyCollectionException{
+		lista.addFirst("1");
+		lista.addLast("2");
+		lista.removelast();
+		Assert.assertEquals(("(1 )"), lista.toString());
+		lista.removelast();
+		Assert.assertEquals(("(1 )"), lista.toString());
+	}
+
+	@Test
+	public void addPosMayorTest(){
+		lista.addPos(pepe,20);
+	}
+
+	@Test
+	public void countElem_not_contains(){
+		Assert.assertEquals(0,listaPepe.countElem("1"));
+	}
+
+	//en los test de agora hay un test que se llama asi y que noo pasa
+	@Test
+	public void removeElemPosInternas() throws EmptyCollectionException{
+		listaPepe.addPos("1", 1);
+		Assert.assertEquals(1, listaPepe.removeElem("1"));
+	}
+
+	@Test
+	public void getPosLastTest(){
+		listaPepe.addLast("1");
+		Assert.assertEquals(5, listaPepe.getPosLast("1"));
 	}
 }
 	
