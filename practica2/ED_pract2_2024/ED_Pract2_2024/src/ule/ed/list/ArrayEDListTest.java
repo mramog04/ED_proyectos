@@ -411,12 +411,12 @@ public class ArrayEDListTest {
 		lista.addLast("5");
 		lista.addLast("6");
 		Iterator<String>  iter=lista.OddEvenIterator();
-		Assert.assertEquals("2", iter.next());
-		Assert.assertEquals("4", iter.next());
-		Assert.assertEquals("6", iter.next());
 		Assert.assertEquals("1", iter.next());
 		Assert.assertEquals("3", iter.next());
 		Assert.assertEquals("5", iter.next());
+		Assert.assertEquals("2", iter.next());
+		Assert.assertEquals("4", iter.next());
+		Assert.assertEquals("6", iter.next());
 	}
 
 	//Se supone que en los test de agora hay un test con este nombre que falla,da nosuchElemenException,
@@ -456,6 +456,11 @@ public class ArrayEDListTest {
 		Assert.assertEquals(("(1 )"), lista.toString());
 		lista.removelast();
 		Assert.assertEquals(("(1 )"), lista.toString());
+		lista.addLast("2");
+		lista.addLast("3");
+		lista.addLast("4");
+		Assert.assertEquals("4", lista.removelast());
+
 	}
 
 	@Test
@@ -479,6 +484,7 @@ public class ArrayEDListTest {
 	public void getPosLastTest(){
 		listaPepe.addLast("1");
 		Assert.assertEquals(5, listaPepe.getPosLast("1"));
+		Assert.assertEquals("1", listaPepe.getElemPos(5));
 	}
 
 	//Test de agora salta que necesita la excepcion IllegalArgument...
@@ -517,7 +523,7 @@ public class ArrayEDListTest {
 	}
 	
 
-	/*@Test
+	@Test
 	public void evenOddIteratorTest(){
 		lista.addFirst("1");
 		lista.addLast("2");
@@ -535,7 +541,24 @@ public class ArrayEDListTest {
 		Assert.assertEquals("2", iter.next());
 		Assert.assertTrue(iter.hasNext());
 		Assert.assertEquals("4", iter.next());
-	}*/
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void getElemPos0NoVacia(){
+		lista.addPos("1", 0);
+		Assert.assertEquals("1",lista.getElemPos(0));
+	}
+
+	@Test
+	public void removeElemUltimaPosTest() throws EmptyCollectionException{
+		lista.addFirst("1");
+		lista.addLast("2");
+		lista.addLast("3");
+		lista.addLast("4");
+		lista.addLast("5");
+		Assert.assertEquals(5, lista.removeElem("5"));
+		Assert.assertEquals("(1 2 3 4 )", lista.toString());
+	}
 }
 	
 	

@@ -82,7 +82,8 @@ public class ArrayEDList<T> implements IEDList<T> {
 	
 
 		private class ArrayEDListOddEvenIterator<T> implements Iterator<T> {
-			private int current=1;
+			private int current=0;
+			private boolean pares=false;
 	
 			@Override
 			public boolean hasNext() {
@@ -100,8 +101,8 @@ public class ArrayEDList<T> implements IEDList<T> {
 			}
 			T element = (T) data[current];
     		current += 2;
-        	if (current >= count) {
-        		current = 0;
+        	if (!pares && current >= size()) {
+        		current = 1;
     		}
     		return element;
 			}
@@ -325,14 +326,12 @@ public class ArrayEDList<T> implements IEDList<T> {
 		if (resultado==-1){
 			throw new NoSuchElementException("Elemento no econtrado");
 		}
-		T[] save = (T[])(new Object[data.length]);
-		for(int i=resultado;i<count;i++){
-			save[i]=data[i+1];
+		for(int i=resultado;i<count-1;i++){
+			data[i]=data[i+1];
 		}
-		save[count-1]=null;
-		data=save;
+		data[count-1]=null;
 		count--;
-		return resultado;	
+		return resultado+1;	
 	}
 	
 	@Override
@@ -341,11 +340,11 @@ public class ArrayEDList<T> implements IEDList<T> {
 		if(size()==0){
 			throw new IllegalArgumentException("Posicion invalida");
 		}
-		if(position<0||position>size()){
+		if(position<=0||position>size()){
 			throw new IllegalArgumentException("Posicion invalida");
 		}
 		
-		return data[position];
+		return data[position-1];
 	}
 
 	@Override
