@@ -3,6 +3,8 @@ package ule.edi.doubleLinkedList;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+import org.w3c.dom.Node;
+
 public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 
 
@@ -85,70 +87,157 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 		}
 	}
 
+	private void elemnull(T elem){
+		if(elem == null){
+			throw new NullPointerException();
+		}
+	}
 
 	@Override
 	public boolean isEmpty() {
 		//TODO
-		return false;
+		return this.front==null;
 		}
 
 
 	@Override
 	public void clear() {
 		//TODO
-		
+		this.front=null;
+		this.last=null;
 	}
 
 	@Override
 	public void addFirst(T elem) {
 		// TODO Auto-generated method stub
-		
+		elemnull(elem);
+		DoubleNode<T> current = this.front;
+		DoubleNode<T> newNode = new DoubleNode<T>(elem);
+		if(isEmpty()){
+			this.last=current;
+		}
+		front=newNode;
+		newNode.next = current;
 	}
 
 
 	@Override
 	public void addLast(T elem) {
 		// TODO Auto-generated method stub
-		
+		elemnull(elem);
+		DoubleNode<T> current = this.last;
+		DoubleNode<T> newNode = new DoubleNode<T>(elem);
+		if(isEmpty()){
+			this.front=current;
+		}
+		current.next=newNode;
+		this.last=newNode;
 	}
 
-
+	//va a saltar fallo en posicion 2;
 	@Override
 	public void addPos(T elem, int position) {
 		// TODO Auto-generated method stub
-		
+		elemnull(elem);
+		if(position<=0){
+			throw new IllegalArgumentException();
+		}
+		if(position>size()){
+			addLast(elem);
+		}
+		DoubleNode<T> current = this.front;
+		DoubleNode<T> current_next = this.front.next;
+		DoubleNode<T> newNode = new DoubleNode<T>(elem);
+		for(int i = position-2;i>0;i--){
+			current=current.next;
+			current_next=current_next.next;
+		}
+		current.next=newNode;
+		newNode.prev=current;
+		newNode.next=current_next;
+		current_next.prev=newNode;
 	}
 
 
 
 	@Override
 	public T getElemPos(int position) {
-		
+		if(position <= 0 || position >size()){
+			throw new IllegalArgumentException();
+		}
+		DoubleNode<T> current = this.front;
+		for(int i = 0;i<position-1;i++){
+			current=current.next;
+		}
 		//TODO
-		return null;
+		return current.elem;
 	}
 
 
 	@Override
 	public int getPosFirst(T elem) {
 		//TODO
-
-		return 0;
+		elemnull(elem);
+		DoubleNode<T> current = this.front;
+		boolean encontrado = false;
+		boolean noEncontrado = false;
+		int contador = 1;
+		while(encontrado == false){
+			if(current.elem.equals(elem)){
+				encontrado=true;
+			}else if(current.next==null){
+				encontrado = true;
+				noEncontrado = true;
+			}else{
+				current=current.next;
+				contador++;
+			}
+		}
+		if(noEncontrado==true){
+			throw new NoSuchElementException();
+		}
+		return contador;
 	}
 
 
 	@Override
 	public int getPosLast(T elem) {
 		//TODO
-
-		return 0;
+		elemnull(elem);
+		DoubleNode<T> current = this.last;
+		boolean encontrado = false;
+		boolean noEncontrado = false;
+		int contador = size();
+		while(encontrado == false){
+			if(current.elem.equals(elem)){
+				encontrado=true;
+			}else if(current.prev==null){
+				encontrado = true;
+				noEncontrado = true;
+			}else{
+				current=current.prev;
+				contador--;
+			}
+		}
+		if(noEncontrado==true){
+			throw new NoSuchElementException();
+		}
+		return contador;
 	}
 
 	
 	@Override
 	public T removeLast()  throws EmptyCollectionException{
 		//TODO
-		return null;
+		DoubleNode<T> current = this.last;
+		if(size()==1){
+			this.front.next=this.last;
+			return current.elem;
+		}
+		DoubleNode<T> current_prev = this.last.prev;
+		this.last.prev=current_prev;
+		current_prev.next=this.last;
+		return current.elem;
 	}
 	
 
@@ -179,7 +268,13 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 	@Override
 	public int size() {
 		//TODO
-		return 0;
+		int contador = 0;
+		DoubleNode<T> current = this.front;
+		while (current != null){
+			current = current.next;
+			contador++;
+		}
+		return contador;
 	}
 
 
