@@ -225,7 +225,7 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 		return contador;
 	}
 
-	
+	//dudas de que funcione bien
 	@Override
 	public T removeLast()  throws EmptyCollectionException{
 		//TODO
@@ -244,9 +244,24 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 	@Override
 	public T removePos(int pos)  throws EmptyCollectionException{
 		// TODO
-		return null;
-	
-
+		if(pos < 1 || pos >size()){
+			throw new IllegalArgumentException();
+		}
+		if(size()==0){
+			throw new EmptyCollectionException(null);
+		}
+		DoubleNode<T> current = this.front;
+		if(size()==1){
+			removeLast();
+		}
+		for(int i = size()-1;pos<i;i--){
+			current=current.next;
+		}
+		DoubleNode<T> current_prev = current.prev;
+		DoubleNode<T> current_next = current.next;
+		current_prev.next=current_next;
+		current_next.prev=current_next;
+		return current.elem;
 	}
 
 
