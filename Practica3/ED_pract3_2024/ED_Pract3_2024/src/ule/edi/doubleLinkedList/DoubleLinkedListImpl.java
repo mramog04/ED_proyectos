@@ -268,7 +268,31 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 	@Override
 	public int removeN(T elem, int times) throws EmptyCollectionException {
 		// TODO Auto-generated method stub
-		return 0;
+		elemnull(elem);
+		if(times<1){
+			throw new IllegalArgumentException();
+		}
+		if(size()==0){
+			throw new EmptyCollectionException(null);
+		}
+		//Acabar metodo...
+		DoubleNode<T> current = this.front;
+		DoubleNode<T> current_prev = current.prev;
+		DoubleNode<T> current_next = current.next;
+		int contador = 0;
+		while(contador<times || current!=null){
+			if(current.elem.equals(current_next)){
+				current_prev.next=current_next;
+				current_next.prev=current_prev;
+				current=current_next;
+				current_next=current.next;
+				contador++;
+			}
+			current_prev=current_prev.next;
+			current=current.next;
+			current_next=current_next.next;
+		}
+		return contador;
 	}
 
 
@@ -276,8 +300,16 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 	@Override
 	public DoubleList<T> copy() {
 		// TODO Auto-generated method stub
-		return null;
-	}
+		DoubleList<T> newList = new DoubleLinkedListImpl<T>(); 
+
+        DoubleNode<T> current = this.front;
+        while (current != null) {
+            newList.addLast(current.elem);
+            current = current.next;
+		}
+
+		return newList;
+}	
 
 
 	@Override
