@@ -336,28 +336,95 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 	@Override
 	public void addAfter(T elem, T target) {
 		// TODO Auto-generated method stub
-		
+		elemnull(elem);
+		elemnull(target);
+		boolean encontrado = false,noEncontrado=false;
+		DoubleNode<T> current = this.front;
+		DoubleNode<T> current_next = current.next;
+		DoubleNode<T> newNode = new DoubleNode<T>(elem);
+		while (encontrado == false){
+			if(current.elem.equals(target)){
+				current.next=newNode;
+				current_next.prev=newNode;
+				newNode.prev=current;
+				newNode.next=current_next;
+				encontrado = true;
+			}else if(current_next == null){
+				noEncontrado=true;
+				encontrado=true;
+			}else{
+				current_next=current_next.next;
+				current=current.next;
+			}
+		}
+		if(encontrado==true && noEncontrado==false){
+			current.next=newNode;
+			current_next.prev=newNode;
+		}
+		if(noEncontrado==true){
+			addLast(elem);
+		}
 	}
 
 
 	@Override
 	public void addAfterAll(T elem, T target) {
 		// TODO Auto-generated method stub
-		
+		elemnull(elem);
+		elemnull(elem);
+		DoubleNode<T> current = this.front;
+		DoubleNode<T> current_next = current.next;
+		DoubleNode<T> newNode = new DoubleNode<T>(elem);
+		int contador=0;
+		while(contador < size()){
+			if(current.elem.equals(target)){
+				current.next=newNode;
+				current_next.prev=newNode;
+				newNode.prev=current;
+				newNode.next=current_next;
+			}
+			current_next=current_next.next;
+			current=current.next;
+			contador++;
+		}
 	}
 
 
 	@Override
 	public T removePenul() throws EmptyCollectionException {
 		// TODO Auto-generated method stub
-		return null;
+		if(size()==1){
+			throw new NoSuchElementException();
+		}
+		if(size()==0){
+			throw new EmptyCollectionException(null);
+		}
+		DoubleNode<T> current = this.last;
+		DoubleNode<T> current_prev = current.prev;
+		DoubleNode<T> current_prev_prev = current.prev.prev;
+		current_prev_prev.next=current;
+		current.prev=current_prev_prev;
+		return current_prev.elem;
 	}
 
 
 	@Override
 	public int countElem(T elem) {
 		// TODO Auto-generated method stub
-		return 0;
+		elemnull(elem);
+		DoubleNode<T> current = this.front;
+		DoubleNode<T> current_next = current.next;
+		DoubleNode<T> newNode = new DoubleNode<T>(elem);
+		int contador=0,i=0;
+		while(contador < size()){
+			if(current.elem.equals(elem)){
+				i++;
+			}
+			current_next=current_next.next;
+			current=current.next;
+			contador++;
+		}
+		return i;
 	}
 
 
@@ -372,7 +439,15 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 	@Override
 	public String toString() {
 		// TODO
-		return null;
+		StringBuilder sb = new StringBuilder();
+		DoubleNode<T> current = this.front;
+		sb.append("(");
+		while(current!=null){
+			sb.append(current.elem+" ");
+			current=current.next;
+		}
+		sb.append(")");
+		return sb.toString();
 	}
 	
 	@Override
