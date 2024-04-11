@@ -93,6 +93,25 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 		}
 	}
 
+	private void fillFreqArray(int[] freqArray, DoubleList<T> otherList) {
+        DoubleNode<T> current = this.front; // Suponiendo que tienes un nodo head en tu lista
+        while (current != null) {
+            DoubleNode<T> otherCurrent = otherList.;
+            while (otherCurrent != null) {
+                if (compare(current.data, otherCurrent.data)) {
+                    freqArray[getIndex(current.data)]++;
+                    break;
+                }
+                otherCurrent = otherCurrent.next;
+            }
+            current = current.next;
+        }
+    }
+
+	private DoubleLinkedListImpl<T>.DoubleNode<T> returnFront(){
+		return this.front;
+	}
+
 	@Override
 	public boolean isEmpty() {
 		//TODO
@@ -329,7 +348,37 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 	@Override
 	public int maxRepeated() {
 	// TODO
-		return 0;
+	if (isEmpty()) { 
+        return 0;
+    }
+
+    int maxCount = 0; 
+    int currentCount = 1; 
+    T maxRepeatedElement = null; 
+
+    DoubleNode<T> current = this.front;
+    DoubleNode<T> nextNode;
+
+    while (current != null) {
+        nextNode = current.next;
+        while (nextNode != null) {
+            if (current.elem.equals(nextNode.elem)) {
+                currentCount++; 
+            }
+            nextNode = nextNode.next;
+        }
+        
+        if (currentCount > maxCount) {
+            maxCount = currentCount;
+            maxRepeatedElement = current.elem;
+        }
+        
+        currentCount = 1; 
+        current = current.next;
+    }
+
+    return maxCount;
+
 	}
 
 
@@ -431,7 +480,21 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 	@Override
 	public boolean sameElems(DoubleList<T> other) {
 		// TODO Auto-generated method stub
-		return false;
+		if (other == null) {
+            throw new NullPointerException();
+        }
+
+        // Arrays para almacenar las frecuencias de elementos en ambas listas
+        int[] thisArray = new int[size()];
+        int[] otherArray = new int[other.size()];
+
+        // Llena los arrays con las frecuencias de elementos en esta lista
+        fillFreqArray(thisArray);
+        // Llena los arrays con las frecuencias de elementos en la otra lista
+        other.fillFreqArray(otherArray);
+
+        // Compara los arrays
+        return Arrays.equals(thisArray, otherArray);
 	}
 
 
@@ -453,21 +516,78 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 	@Override
 	public String toStringReverse() {
 		// TODO
-		return "";
+		if (isEmpty()) { 
+			return "()"; 
+		}
+	
+		StringBuilder sb = new StringBuilder();
+		sb.append("(");
+	
+		DoubleNode<T> current = this.last; 
+		while (current != null) { 
+			sb.append(current.elem).append(" "); 
+			current = current.prev; 
+		}
+	
+		sb.append(")"); 
+		return sb.toString();
 	}
 
 
 	@Override
 	public String toStringFromUntil(int from, int until) {
 		// TODO
-				
-		return null;
+		if (from <= 0 || until <= 0 || until < from) {
+			throw new IllegalArgumentException("Los parámetros from y until deben ser mayores que 0 y until debe ser mayor o igual que from.");
+		}
+	
+		StringBuilder sb = new StringBuilder();
+		sb.append("(");
+	
+		DoubleNode<T> current = this.front; 
+		int currentPosition = 1;
+		while (current != null && currentPosition < from) {
+			current = current.next;
+			currentPosition++;
+		}
+	
+		
+		while (current != null && currentPosition <= until) {
+			sb.append(current.elem+" "); 
+			current = current.next; 
+			currentPosition++;
+		}
+	
+		sb.append(")"); 
+		return sb.toString();
 	}
 	
 	@Override
 	public String toStringFromUntilReverse(int from, int until) {
 		// TODO Auto-generated method stub
-		return null;
+		if (from <= 0 || until <= 0 || from < until) {
+			throw new IllegalArgumentException("Los parámetros from y until deben ser mayores que 0 y from debe ser mayor o igual que until.");
+		}
+	
+		StringBuilder sb = new StringBuilder();
+		sb.append("(");
+	
+		DoubleNode<T> current = this.last; 
+		int currentPosition = size(); 
+		while (current != null && currentPosition > from) {
+			current = current.prev;
+			currentPosition--;
+		}
+	
+		
+		while (current != null && currentPosition >= until) {
+			sb.append(current.elem).append(" "); 
+			current = current.prev; 
+			currentPosition--;
+		}
+	
+		sb.append(")"); 
+		return sb.toString();
 	}
 
 
