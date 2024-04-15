@@ -2,6 +2,7 @@ package ule.edi.doubleLinkedList;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import ule.edi.doubleLinkedList.*;
 
 import org.w3c.dom.Node;
 
@@ -9,13 +10,13 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 
 
 	//	referencia al primer aux de la lista
-	private DoubleNode<T> front;
+	public DoubleNode<T> front;
 
 	//	referencia al Último aux de la lista
-	private DoubleNode<T> last;
+	public DoubleNode<T> last;
 
 
-	private class DoubleNode<T> {
+	public class DoubleNode<T> {
 
 		DoubleNode(T element) {
 			this.elem = element;
@@ -40,14 +41,19 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 		@Override
 		public boolean hasNext() {
 			// TODO
-			return false;
+			return node.next!=null;
 		}
 	
 
 		@Override
 		public T next() {
 		// TODO
-			return null;
+			if(!hasNext()){
+				throw new NoSuchElementException();
+			}
+			DoubleNode<T> aux = node;
+			node=node.next;
+			return aux.elem;
 		}
 	}
 
@@ -65,13 +71,18 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 		@Override
 		public boolean hasNext() {
 			// TODO	
-			return false;
+			return node.prev!=null;
 			}
 
 		@Override
 		public T next() {
 			// TODO
-			return null;
+			if(!hasNext()){
+				throw new NoSuchElementException();
+			}
+			DoubleNode<T> aux = node;
+			node=node.prev;
+			return aux.elem;
 		}
 	}
 	
@@ -93,24 +104,10 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 		}
 	}
 
-	private void fillFreqArray(int[] freqArray, DoubleList<T> otherList) {
-        DoubleNode<T> current = this.front; // Suponiendo que tienes un nodo head en tu lista
-        while (current != null) {
-            DoubleNode<T> otherCurrent = otherList.;
-            while (otherCurrent != null) {
-                if (compare(current.data, otherCurrent.data)) {
-                    freqArray[getIndex(current.data)]++;
-                    break;
-                }
-                otherCurrent = otherCurrent.next;
-            }
-            current = current.next;
-        }
-    }
-
-	private DoubleLinkedListImpl<T>.DoubleNode<T> returnFront(){
+	public DoubleNode<T> getFront(){
 		return this.front;
 	}
+	
 
 	@Override
 	public boolean isEmpty() {
@@ -476,25 +473,51 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 		return i;
 	}
 
-
+	
 	@Override
 	public boolean sameElems(DoubleList<T> other) {
 		// TODO Auto-generated method stub
 		if (other == null) {
-            throw new NullPointerException();
-        }
-
-        // Arrays para almacenar las frecuencias de elementos en ambas listas
-        int[] thisArray = new int[size()];
-        int[] otherArray = new int[other.size()];
-
-        // Llena los arrays con las frecuencias de elementos en esta lista
-        fillFreqArray(thisArray);
-        // Llena los arrays con las frecuencias de elementos en la otra lista
-        other.fillFreqArray(otherArray);
-
-        // Compara los arrays
-        return Arrays.equals(thisArray, otherArray);
+			throw new NullPointerException("La lista pasada como parámetro es nula");
+		}
+	
+		int thisSize = size();
+		int otherSize = other.size();
+	
+		if (thisSize != otherSize) {
+			return false;
+		}
+	
+		int[] freqThis = new int[thisSize];
+		int[] freqOther = new int[otherSize];
+	
+		DoubleNode<T> currentThis = this.front;
+		while (currentThis != null) {
+			DoubleNode<T> currentOther = other.getFront();
+			boolean found = false;
+			int i = 0;
+			while (currentOther != null && !found) {
+				if (currentThis.elem.equals(currentOther.elem) && freqOther[i] == 0) {
+					freqThis[i]++;
+					freqOther[i]++;
+					found = true;
+				}
+				currentOther = currentOther.next;
+				i++;
+			}
+			if (!found) {
+				return false;
+			}
+			currentThis = currentThis.next;
+		}
+	
+		for (int i = 0; i < thisSize; i++) {
+			if (freqThis[i] != freqOther[i]) {
+				return false;
+			}
+		}
+	
+		return true;
 	}
 
 

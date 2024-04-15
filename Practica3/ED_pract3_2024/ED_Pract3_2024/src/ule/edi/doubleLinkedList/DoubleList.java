@@ -39,12 +39,16 @@ import java.util.Iterator;
 		 */
 		
 		
+		
+
+
 		/**
 		 * Indica si esta lista está vacía
 		 * 
 		 * @return  true   si no contiene elementos
 		 */
 		public boolean isEmpty();
+		
 		
 		/**
 		 * Elimina todo el contenido de esta lista.
