@@ -2,8 +2,6 @@ package ule.edi.doubleLinkedList;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import ule.edi.doubleLinkedList.*;
-
 import org.w3c.dom.Node;
 
 public class DoubleLinkedListImpl<T> implements DoubleList<T> {
@@ -36,12 +34,13 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 	private class DoubleLinkedListIterator<T> implements Iterator<T> {
 		DoubleNode<T> node;
 		public DoubleLinkedListIterator(DoubleNode<T> aux) {
+			node=aux;
 		}
 
 		@Override
 		public boolean hasNext() {
 			// TODO
-			return node.next!=null;
+			return node!=null;
 		}
 	
 
@@ -66,6 +65,7 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 		DoubleNode<T> node;
 		public DoubleLinkedListIteratorReverse(DoubleNode<T> aux) {
 			// TODO	
+			node=aux;
 			}
 
 		@Override
@@ -87,8 +87,75 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 	}
 	
 	// TODO: añadir clases para el resto de iteradores
+	@SuppressWarnings("hiding")
+	private class DoubleLinkedListProgressIterator<T> implements Iterator<T> {
+		DoubleNode<T> node;
+		int cont=0,incr=1;
+		public DoubleLinkedListProgressIterator(DoubleNode<T> aux) {
+			// TODO	
+			node=aux;
+			}
 
-	/////
+		@Override
+		public boolean hasNext() {
+			// TODO	
+			return node!=null;
+			}
+
+		@Override
+		public T next() {
+			// TODO
+			if(!hasNext()){
+				throw new NoSuchElementException();
+			}
+			T value = node.elem;
+			for (int i = 0; i < cont; i++) {
+				if (node == null) {
+					break;
+				}
+				node = node.next;
+			}
+			cont++;
+			if (node == null) {
+				node = node.next;
+				cont = ++incr + 1;
+			}
+			return value;
+		}
+	}
+	
+	@SuppressWarnings("hiding")
+	private class DoubleLinkedListProgressReverseIterator<T> implements Iterator<T> {
+		DoubleNode<T> node;
+		int skip=1;
+		public DoubleLinkedListProgressReverseIterator(DoubleNode<T> aux) {
+			// TODO	
+			node=aux;
+			}
+
+		@Override
+		public boolean hasNext() {
+			// TODO	
+			return node!=null && node.prev!=null;
+			}
+
+		@Override
+		public T next() {
+			// TODO
+			if(!hasNext()){
+				throw new NoSuchElementException();
+			}
+			T value = node.elem;
+			for (int i = 0; i < skip; i++) {
+				node = node.prev;
+				if (node == null) {
+					break;
+				}
+			}
+			skip++;
+			return value;
+		}
+	}
 
 	@SafeVarargs
 	public DoubleLinkedListImpl(T...v ) {
@@ -140,14 +207,20 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 	@Override
 	public void addLast(T elem) {
 		// TODO Auto-generated method stub
-		elemnull(elem);
-		DoubleNode<T> current = this.last;
-		DoubleNode<T> newNode = new DoubleNode<T>(elem);
-		if(isEmpty()){
-			this.front=current;
+		elemnull(elem); 
+		DoubleNode<T> newNode = new DoubleNode<>(elem);
+		if (isEmpty()) {
+			this.front = newNode;
+			this.last = newNode;
+		} else if(size()==1){
+			this.front.next=newNode;
+			this.last=newNode;
+			newNode.prev=this.front;
+		} else {
+			this.last.next = newNode;
+			newNode.prev = this.last;
+			this.last = newNode;
 		}
-		current.next=newNode;
-		this.last=newNode;
 	}
 
 	//va a saltar fallo en posicion 2;
@@ -160,6 +233,16 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 		}
 		if(position>size()){
 			addLast(elem);
+			return;
+		}
+		if(position==1){
+			elemnull(elem);
+			DoubleNode<T> current = this.front;
+			DoubleNode<T> newNode = new DoubleNode<T>(elem);
+			front=newNode;
+			newNode.next = current;
+			current.prev=newNode;
+			return;
 		}
 		DoubleNode<T> current = this.front;
 		DoubleNode<T> current_next = this.front.next;
@@ -245,15 +328,20 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 	@Override
 	public T removeLast()  throws EmptyCollectionException{
 		//TODO
-		DoubleNode<T> current = this.last;
-		if(size()==1){
-			this.front.next=this.last;
-			return current.elem;
+		if(isEmpty()){
+			throw new EmptyCollectionException(null);
 		}
-		DoubleNode<T> current_prev = this.last.prev;
-		this.last.prev=current_prev;
-		current_prev.next=this.last;
-		return current.elem;
+		T elementoBorrado = this.last.elem;
+
+		if(size()==1){
+			this.front=null;
+			this.last=null;
+		}else {
+			DoubleNode<T> newNodeLast = this.last.prev;
+			this.last=newNodeLast;
+			newNodeLast.next=null;
+		}
+		return elementoBorrado;
 	}
 	
 
@@ -263,20 +351,30 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 		if(pos < 1 || pos >size()){
 			throw new IllegalArgumentException();
 		}
-		if(size()==0){
+		if(isEmpty()){
 			throw new EmptyCollectionException(null);
 		}
 		DoubleNode<T> current = this.front;
 		if(size()==1){
-			removeLast();
+			T removedElem=removeLast();
+			return removedElem;
 		}
-		for(int i = size()-1;pos<i;i--){
+		for(int i = 1;i<pos;i++){
 			current=current.next;
 		}
 		DoubleNode<T> current_prev = current.prev;
 		DoubleNode<T> current_next = current.next;
-		current_prev.next=current_next;
-		current_next.prev=current_next;
+		if (current_prev == null) {
+			this.front = current_next;
+		} else {
+			current_prev.next = current_next;
+		}
+	
+		if (current_next != null) {
+			current_next.prev = current_prev;
+		} else {
+			this.last = current_prev;
+		}
 		return current.elem;
 	}
 
@@ -288,25 +386,33 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 		if(times<1){
 			throw new IllegalArgumentException();
 		}
-		if(size()==0){
+		if(isEmpty()){
 			throw new EmptyCollectionException(null);
 		}
-		//Acabar metodo...
-		DoubleNode<T> current = this.front;
-		DoubleNode<T> current_prev = current.prev;
-		DoubleNode<T> current_next = current.next;
 		int contador = 0;
-		while(contador<times || current!=null){
-			if(current.elem.equals(current_next)){
-				current_prev.next=current_next;
-				current_next.prev=current_prev;
-				current=current_next;
-				current_next=current.next;
+		DoubleNode<T> current = this.front;
+	
+		while (current != null && contador < times) {
+			if (current.elem.equals(elem)) {
+				DoubleNode<T> prevNode = current.prev;
+				DoubleNode<T> nextNode = current.next;
+	
+				if (prevNode != null) {
+					prevNode.next = nextNode;
+				} else {
+					this.front = nextNode;
+				}
+	
+				if (nextNode != null) {
+					nextNode.prev = prevNode;
+				} else {
+					this.last = prevNode;
+				}
+	
 				contador++;
 			}
-			current_prev=current_prev.next;
-			current=current.next;
-			current_next=current_next.next;
+	
+			current = current.next;
 		}
 		return contador;
 	}
@@ -384,31 +490,26 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 		// TODO Auto-generated method stub
 		elemnull(elem);
 		elemnull(target);
-		boolean encontrado = false,noEncontrado=false;
+	
+		DoubleNode<T> newNode = new DoubleNode<>(elem);
 		DoubleNode<T> current = this.front;
-		DoubleNode<T> current_next = current.next;
-		DoubleNode<T> newNode = new DoubleNode<T>(elem);
-		while (encontrado == false){
-			if(current.elem.equals(target)){
-				current.next=newNode;
-				current_next.prev=newNode;
-				newNode.prev=current;
-				newNode.next=current_next;
-				encontrado = true;
-			}else if(current_next == null){
-				noEncontrado=true;
-				encontrado=true;
-			}else{
-				current_next=current_next.next;
-				current=current.next;
-			}
+	
+		while (current != null && !current.elem.equals(target)) {
+			current = current.next;
 		}
-		if(encontrado==true && noEncontrado==false){
-			current.next=newNode;
-			current_next.prev=newNode;
+	
+		if (current == null) {
+			throw new NoSuchElementException();
 		}
-		if(noEncontrado==true){
-			addLast(elem);
+	
+		DoubleNode<T> nextNode = current.next;
+		current.next = newNode;
+		newNode.prev = current;
+		newNode.next = nextNode;
+		if (nextNode != null) {
+			nextNode.prev = newNode;
+		} else {
+			this.last = newNode;
 		}
 	}
 
@@ -458,19 +559,34 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 	public int countElem(T elem) {
 		// TODO Auto-generated method stub
 		elemnull(elem);
+		if(size()==0){
+			return 0;
+		}
+		if(size()==1){
+			if(this.front.elem.equals(elem)){
+				return 1;
+			}else{
+				return 0;
+			}
+		}
 		DoubleNode<T> current = this.front;
-		DoubleNode<T> current_next = current.next;
-		DoubleNode<T> newNode = new DoubleNode<T>(elem);
 		int contador=0,i=0;
-		while(contador < size()){
+		while(contador < size() && current!=null){
 			if(current.elem.equals(elem)){
 				i++;
 			}
-			current_next=current_next.next;
 			current=current.next;
 			contador++;
 		}
 		return i;
+	}
+
+	private DoubleNode<T> getFrontNode(DoubleList<T> list) {
+		Iterator<T> iterator = list.iterator();
+		if (iterator.hasNext()) {
+			return new DoubleNode<>(iterator.next());
+		}
+		return null;
 	}
 
 	
@@ -488,33 +604,21 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 			return false;
 		}
 	
-		int[] freqThis = new int[thisSize];
-		int[] freqOther = new int[otherSize];
-	
+		DoubleNode<T> otherFront = getFrontNode(other);
 		DoubleNode<T> currentThis = this.front;
+		DoubleNode<T> currentOther = otherFront;
+	
 		while (currentThis != null) {
-			DoubleNode<T> currentOther = other.getFront();
-			boolean found = false;
-			int i = 0;
-			while (currentOther != null && !found) {
-				if (currentThis.elem.equals(currentOther.elem) && freqOther[i] == 0) {
-					freqThis[i]++;
-					freqOther[i]++;
-					found = true;
-				}
-				currentOther = currentOther.next;
-				i++;
-			}
-			if (!found) {
+			if (!currentThis.elem.equals(currentOther.elem)) {
 				return false;
 			}
 			currentThis = currentThis.next;
+			currentOther = currentOther.next;
 		}
 	
-		for (int i = 0; i < thisSize; i++) {
-			if (freqThis[i] != freqOther[i]) {
-				return false;
-			}
+		// Verificar si llegamos al final de other
+		if (currentOther != null) {
+			return false;
 		}
 	
 		return true;
@@ -629,13 +733,13 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 	@Override
 	public Iterator<T> progressIterator() {
 		// TODO Auto-generated method stub
-		return null;
+		return new DoubleLinkedListProgressIterator<>(front);
 	}
 
 	@Override
 	public Iterator<T> progressReverseIterator() {
 		// TODO Auto-generated method stub
-		return null;
+		return new DoubleLinkedListProgressReverseIterator<>(last);
 	}
 
 

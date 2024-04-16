@@ -376,4 +376,90 @@ public class DoubleLinkedImplTest {
 		Assert.assertEquals("(A B C D )", lista.toString());
 		}	
 
+
+		@Test
+		public void test_countElem() {
+			DoubleLinkedListImpl<String> lista = new DoubleLinkedListImpl<String>();
+			lista.addFirst("2");
+			lista.addLast("3");
+			lista.addLast("1");
+			Assert.assertEquals(1, lista.countElem("2"));
+			Assert.assertEquals(1, lista.countElem("3"));
+			Assert.assertEquals(1, lista.countElem("1"));
+			Assert.assertEquals(0, lista.countElem("4")); // Verificar cuando el elemento no está presente
+		}
+	
+		@Test
+		public void test_size() {
+			DoubleLinkedListImpl<String> lista = new DoubleLinkedListImpl<String>();
+			Assert.assertEquals(0, lista.size());
+			lista.addFirst("2");
+			lista.addLast("3");
+			lista.addLast("1");
+			Assert.assertEquals(3, lista.size());
+		}
+	
+		@Test
+		public void test_maxRepeated() {
+			DoubleLinkedListImpl<String> lista = new DoubleLinkedListImpl<String>("2", "1", "2","2","3","1");
+			Assert.assertEquals(3, lista.maxRepeated());
+			lista.clear();
+			Assert.assertEquals(0, lista.maxRepeated()); // Verificar cuando la lista está vacía
+		}
+	
+		@Test
+		public void test_toStringFromUntil() {
+			DoubleLinkedListImpl<String> lista = new DoubleLinkedListImpl<String>("2", "1", "2","2","3","1");
+			Assert.assertEquals("(2 1 2 )", lista.toStringFromUntil(1, 3));
+			Assert.assertEquals("(2 1 2 2 3 1 )", lista.toStringFromUntil(1, 6));
+			Assert.assertEquals("()", lista.toStringFromUntil(8, 10)); // Verificar cuando los índices están fuera de rango
+		}
+	
+		@Test(expected=IllegalArgumentException.class)
+		public void test_toStringFromUntilFromNegativo() {
+			listaConElems.toStringFromUntil(-3, 4); // Verificar excepción cuando el índice inicial es negativo
+		}
+	
+		@Test
+		public void test_toString() {
+			Assert.assertEquals("()", lv.toString()); // Verificar la representación de una lista vacía
+		}
+	
+		@Test(expected=NoSuchElementException.class)
+		public void test_IteratorNextEnVacia() {
+			Iterator<String> iterador = lv.iterator();
+			Assert.assertFalse(iterador.hasNext());
+			iterador.next(); // Verificar excepción cuando se llama a next en una lista vacía
+		}
+	
+		@Test(expected=NoSuchElementException.class)
+		public void test_progressIterator() {
+			DoubleLinkedListImpl<String> lista = new DoubleLinkedListImpl<String>("2", "1", "2","2","3","1");
+			lista.addLast("4");
+			lista.addLast("6");
+			Iterator<String> iterator = lista.progressReverseIterator();
+			StringBuffer nuevo = new StringBuffer("(");
+			while(iterator.hasNext()) {
+				nuevo.append(iterator.next()+ " ");
+			}
+			nuevo.append(")");
+			Assert.assertEquals("(6 4 3 1 )", nuevo.toString());
+			Assert.assertFalse(iterator.hasNext());
+			iterator.next(); // Verificar excepción cuando se llama a next después de que no haya más elementos
+		}
+
+		@Test
+		public void test_addAfter_LastElement() {
+			DoubleLinkedListImpl<String> lista = new DoubleLinkedListImpl<String>("2", "1", "2", "2", "3", "1");
+			lista.addLast("4"); // Añadimos un elemento al final de la lista
+			lista.addAfter("5", "4"); // Añadimos un elemento después del último elemento
+			Assert.assertEquals("(2 1 2 2 3 1 4 5 )", lista.toString());
+		}
+
+		@Test
+		public void testRemovePenul_enListaCon3Elementos() throws EmptyCollectionException {
+			DoubleLinkedListImpl<String> lista = new DoubleLinkedListImpl<String>("2", "1", "3");
+			lista.removePenul();
+			Assert.assertEquals("(2 3 )", lista.toString());
+		}
 }
