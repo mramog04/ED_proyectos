@@ -148,14 +148,15 @@ public class DoubleLinkedImplTest {
 		lista.addAfter("3", null);
 	}
 	
-	@Test(expected=NoSuchElementException.class)
-	public void testaddAfterInexistente() {
+	@Test public void testaddAfterInexistente() {
 		DoubleLinkedListImpl<String> lista = new DoubleLinkedListImpl<String>();
 		lista.addFirst("2");
 		lista.addLast("3");
-		lista.addLast("7");
+		lista.addLast("7");  
+		Assert.assertEquals("(2 3 7 )", lista.toString());
 		lista.addAfter("3", "4");
-	}
+		Assert.assertEquals("(2 3 7 3 )", lista.toString());
+	 }
 	
 	@Test
 	public void testGetElemPos() {
@@ -461,5 +462,143 @@ public class DoubleLinkedImplTest {
 			DoubleLinkedListImpl<String> lista = new DoubleLinkedListImpl<String>("2", "1", "3");
 			lista.removePenul();
 			Assert.assertEquals("(2 3 )", lista.toString());
+		}
+
+		@Test
+		public void testToStringReverse_enListaVacia() {
+			DoubleLinkedListImpl<String> lista = new DoubleLinkedListImpl<String>();
+			Assert.assertEquals("()", lista.toStringReverse());
+		}
+		
+		@Test
+		public void testToStringReverse_enListaConUnElemento() {
+			DoubleLinkedListImpl<String> lista = new DoubleLinkedListImpl<String>("A");
+			Assert.assertEquals("(A )", lista.toStringReverse());
+		}
+		
+		@Test
+		public void testToStringReverse_enListaConVariosElementos() {
+			DoubleLinkedListImpl<String> lista = new DoubleLinkedListImpl<String>("A", "B", "C");
+			Assert.assertEquals("(C B A )", lista.toStringReverse());
+		}
+		
+		
+		
+		@Test
+		public void testToStringReverse_enListaConElementosRepetidos() {
+			DoubleLinkedListImpl<String> lista = new DoubleLinkedListImpl<String>("A", "B", "A", "C", "C");
+			Assert.assertEquals("(C C A B A )", lista.toStringReverse());
+		}
+
+		@Test
+		public void test_toSameElems_MismosElemsDistintoOrden() {
+			DoubleLinkedListImpl<String> lista1 = new DoubleLinkedListImpl<String>("A", "B", "C");
+			DoubleLinkedListImpl<String> lista2 = new DoubleLinkedListImpl<String>("B", "A", "C");
+			
+			Assert.assertEquals(true, lista1.sameElems(lista2));
+		}
+
+		@Test
+		public void testAddAfterAll() {
+			DoubleLinkedListImpl<String> lista = new DoubleLinkedListImpl<String>("B", "B", "C", "B", "D", "B");
+		
+			// Agregar "X" después de cada ocurrencia de "B"
+			lista.addAfterAll("X", "B");
+		
+			// La lista debería ser: A -> B -> X -> C -> B -> X -> D -> B -> X
+			Assert.assertEquals("(B X B X C B X D B X )", lista.toString());
+		}
+
+		@Test
+		public void testRemovePenul_enListaCon2Elementos() throws EmptyCollectionException {
+			DoubleLinkedListImpl<String> lista = new DoubleLinkedListImpl<String>("A", "B");
+			
+			// Remover el penúltimo elemento de la lista
+			Assert.assertEquals("A", lista.removePenul());
+			
+			// Verificar que el penúltimo elemento ("A") ha sido removido correctamente
+			Assert.assertEquals("(B )", lista.toString());
+			Assert.assertEquals(1, lista.size());
+		}
+
+		@Test
+		public void testaddAfterAllEnVacia() {
+			DoubleLinkedListImpl<Integer> lista = new DoubleLinkedListImpl<Integer>();
+		
+			// Agregar "2" después de cada ocurrencia de "1" (que no existe en la lista vacía)
+			lista.addAfterAll(1, 2);
+		
+			// La lista debería seguir estando vacía
+			Assert.assertEquals("(1 )", lista.toStringReverse());
+			Assert.assertEquals(1, lista.size());
+		}
+		
+		@Test
+		public void testToStringReverse() {
+			// Lista vacía
+			DoubleLinkedListImpl<Integer> listaVacia = new DoubleLinkedListImpl<>();
+			Assert.assertEquals("()", listaVacia.toStringReverse());
+	
+			// Lista con un elemento
+			DoubleLinkedListImpl<Integer> listaUnElemento = new DoubleLinkedListImpl<>(1);
+			Assert.assertEquals("(1 )", listaUnElemento.toStringReverse());
+	
+			// Lista con dos elementos
+			DoubleLinkedListImpl<Integer> listaDosElementos = new DoubleLinkedListImpl<>(1, 2);
+			Assert.assertEquals("(2 1 )", listaDosElementos.toStringReverse());
+	
+			// Lista con tres elementos
+			DoubleLinkedListImpl<Integer> listaTresElementos = new DoubleLinkedListImpl<>(1, 2, 3);
+			Assert.assertEquals("(3 2 1 )", listaTresElementos.toStringReverse());
+		}
+	
+		@Test
+		public void testToStringFromUntil() {
+			// Lista vacía
+			DoubleLinkedListImpl<Integer> listaVacia = new DoubleLinkedListImpl<>();
+			Assert.assertEquals("()", listaVacia.toStringFromUntil(1, 3));
+	
+			// Lista con un elemento
+			DoubleLinkedListImpl<Integer> listaUnElemento = new DoubleLinkedListImpl<>(1);
+			Assert.assertEquals("(1 )", listaUnElemento.toStringFromUntil(1, 3));
+	
+			// Lista con dos elementos
+			DoubleLinkedListImpl<Integer> listaDosElementos = new DoubleLinkedListImpl<>(1, 2);
+			Assert.assertEquals("(1 2 )", listaDosElementos.toStringFromUntil(1, 3));
+	
+			// Lista con tres elementos
+			DoubleLinkedListImpl<Integer> listaTresElementos = new DoubleLinkedListImpl<>(1, 2, 3);
+			Assert.assertEquals("(1 2 3 )", listaTresElementos.toStringFromUntil(1, 3));
+		}
+	
+		@Test
+		public void testToStringFromUntilReverse() {
+			// Lista vacía
+			DoubleLinkedListImpl<Integer> listaVacia = new DoubleLinkedListImpl<>();
+			Assert.assertEquals("()", listaVacia.toStringFromUntilReverse(3, 1));
+	
+			// Lista con un elemento
+			DoubleLinkedListImpl<Integer> listaUnElemento = new DoubleLinkedListImpl<>(1);
+			Assert.assertEquals("(1 )", listaUnElemento.toStringFromUntilReverse(3, 1));
+	
+			// Lista con dos elementos
+			DoubleLinkedListImpl<Integer> listaDosElementos = new DoubleLinkedListImpl<>(1, 2);
+			Assert.assertEquals("(2 1 )", listaDosElementos.toStringFromUntilReverse(3, 1));
+	
+			// Lista con tres elementos
+			DoubleLinkedListImpl<Integer> listaTresElementos = new DoubleLinkedListImpl<>(1, 2, 3);
+			Assert.assertEquals("(3 2 1 )", listaTresElementos.toStringFromUntilReverse(3, 1));
+		}
+
+		@Test(expected = NoSuchElementException.class)
+		public void IteratorReverseNextEnVaciaTest() {
+			DoubleLinkedListImpl<String> lista = new DoubleLinkedListImpl<>();
+	
+			// Obtener un iterador reverso en una lista vacía
+			Iterator<String> iterador = lista.reverseIterator();
+	
+			// Intentar llamar a next() en una lista vacía debe lanzar NoSuchElementException
+			Assert.assertFalse(iterador.hasNext());
+			iterador.next();
 		}
 }

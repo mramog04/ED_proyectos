@@ -71,7 +71,7 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 		@Override
 		public boolean hasNext() {
 			// TODO	
-			return node.prev!=null;
+			return node!=null;
 			}
 
 		@Override
@@ -80,9 +80,9 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 			if(!hasNext()){
 				throw new NoSuchElementException();
 			}
-			DoubleNode<T> aux = node;
+			T elemento = node.elem;
 			node=node.prev;
-			return aux.elem;
+			return elemento;
 		}
 	}
 	
@@ -499,7 +499,8 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 		}
 	
 		if (current == null) {
-			throw new NoSuchElementException();
+			addLast(elem);
+			return;
 		}
 	
 		DoubleNode<T> nextNode = current.next;
@@ -518,21 +519,27 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 	public void addAfterAll(T elem, T target) {
 		// TODO Auto-generated method stub
 		elemnull(elem);
-		elemnull(elem);
+		elemnull(target);
+
+		if (isEmpty()) {
+			addFirst(elem);
+			return;
+		}
+	
 		DoubleNode<T> current = this.front;
-		DoubleNode<T> current_next = current.next;
-		DoubleNode<T> newNode = new DoubleNode<T>(elem);
-		int contador=0;
-		while(contador < size()){
-			if(current.elem.equals(target)){
-				current.next=newNode;
-				current_next.prev=newNode;
-				newNode.prev=current;
-				newNode.next=current_next;
+		while (current != null) {
+			if (current.elem.equals(target)) {
+				DoubleNode<T> newNode = new DoubleNode<T>(elem);
+				DoubleNode<T> nextNode = current.next;
+				current.next = newNode;
+				newNode.prev = current;
+				newNode.next = nextNode;
+				if (nextNode != null) {
+					nextNode.prev = newNode;
+				}
+				current = newNode; 
 			}
-			current_next=current_next.next;
-			current=current.next;
-			contador++;
+			current = current.next;
 		}
 	}
 
@@ -540,18 +547,23 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 	@Override
 	public T removePenul() throws EmptyCollectionException {
 		// TODO Auto-generated method stub
-		if(size()==1){
-			throw new NoSuchElementException();
+		if (size() < 2) {
+			throw new NoSuchElementException("No hay suficientes elementos para eliminar el penúltimo");
 		}
-		if(size()==0){
-			throw new EmptyCollectionException(null);
+		
+		DoubleNode<T> penultimateNode = last.prev;
+		T removedElem = penultimateNode.elem;
+	
+
+		if (penultimateNode.prev == null) {
+			front = last;
+			last.prev = null;
+		} else {
+			penultimateNode.prev.next = last;
+			last.prev = penultimateNode.prev;
 		}
-		DoubleNode<T> current = this.last;
-		DoubleNode<T> current_prev = current.prev;
-		DoubleNode<T> current_prev_prev = current.prev.prev;
-		current_prev_prev.next=current;
-		current.prev=current_prev_prev;
-		return current_prev.elem;
+	
+		return removedElem;
 	}
 
 
@@ -592,7 +604,6 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 	
 	@Override
 	public boolean sameElems(DoubleList<T> other) {
-		// TODO Auto-generated method stub
 		if (other == null) {
 			throw new NullPointerException("La lista pasada como parámetro es nula");
 		}
@@ -604,26 +615,75 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 			return false;
 		}
 	
-		DoubleNode<T> otherFront = getFrontNode(other);
-		DoubleNode<T> currentThis = this.front;
-		DoubleNode<T> currentOther = otherFront;
-	
-		while (currentThis != null) {
-			if (!currentThis.elem.equals(currentOther.elem)) {
-				return false;
-			}
-			currentThis = currentThis.next;
-			currentOther = currentOther.next;
+		DoubleLinkedListImpl<T> otherCopy = new DoubleLinkedListImpl<>();
+		for (T elem : other) {
+			otherCopy.addLast(elem);
 		}
 	
-		// Verificar si llegamos al final de other
-		if (currentOther != null) {
-			return false;
+
+		for (T elem : this) {
+			if (!otherCopy.contains(elem)) {
+				return false;
+			}
+
+			otherCopy.remove(elem);
 		}
 	
 		return true;
 	}
 
+	private boolean contains(T target) {
+		if (target == null) {
+			throw new NullPointerException("El elemento buscado es nulo");
+		}
+	
+		DoubleNode<T> current = front;
+		while (current != null) {
+			if (current.elem.equals(target)) {
+				return true;
+			}
+			current = current.next;
+		}
+	
+		return false;
+	}
+	
+	private boolean remove(T target) {
+		if (target == null) {
+			throw new NullPointerException("El elemento a eliminar es nulo");
+		}
+	
+		if (isEmpty()) {
+			return false;
+		}
+	
+		if (front.elem.equals(target)) {
+			front = front.next;
+			if (front != null) {
+				front.prev = null;
+			} else {
+				last = null;
+			}
+			return true;
+		}
+	
+		DoubleNode<T> current = front.next;
+		while (current != null) {
+			if (current.elem.equals(target)) {
+				current.prev.next = current.next;
+				if (current.next != null) {
+					current.next.prev = current.prev;
+				} else {
+					last = current.prev;
+				}
+				return true;
+			}
+			current = current.next;
+		}
+	
+		return false;
+	}
+	
 
 
 	@Override
@@ -646,13 +706,19 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 		if (isEmpty()) { 
 			return "()"; 
 		}
-	
+
 		StringBuilder sb = new StringBuilder();
+		DoubleNode<T> current_ex = this.front; 
+		if(size()==1){
+			sb.append("("+current_ex.elem+" )");
+			return sb.toString();
+		}
+	
 		sb.append("(");
 	
 		DoubleNode<T> current = this.last; 
 		while (current != null) { 
-			sb.append(current.elem).append(" "); 
+			sb.append(current.elem+" ");
 			current = current.prev; 
 		}
 	
