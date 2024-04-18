@@ -601,4 +601,83 @@ public class DoubleLinkedImplTest {
 			Assert.assertFalse(iterador.hasNext());
 			iterador.next();
 		}
+
+		@Test
+		public void testAddAfterAllInexistente(){
+			listaConElems.addAfterAll("3", "Z");
+			Assert.assertEquals("(A B C A B D )", listaConElems.toString());
+		}
+
+		@Test
+		public void iteratorReverseProgressTest(){
+			Iterator<String> iterator = listaConElems.progressReverseIterator();
+			Assert.assertTrue(iterator.hasNext());
+			Assert.assertEquals("D", iterator.next());
+			Assert.assertTrue(iterator.hasNext());
+			Assert.assertEquals("B", iterator.next());
+			Assert.assertTrue(iterator.hasNext());
+			Assert.assertEquals("C", iterator.next());
+			Assert.assertFalse(iterator.hasNext());
+		}
+
+		@Test
+		public void removeTest() throws EmptyCollectionException{
+			DoubleLinkedListImpl<String> lista1 = new DoubleLinkedListImpl<String>("A", "B", "C","D","E");
+			Assert.assertFalse(lista1.isEmpty());
+			lista1.removePenul();
+			Assert.assertEquals("(A B C E )", lista1.toString());
+			lista1.removeLast();
+			Assert.assertEquals("(A B C )", lista1.toString());
+			lista1.removePos(1);
+			Assert.assertEquals("(B C )", lista1.toString());
+			lista1.removeN("B", 2);
+			Assert.assertEquals("(C )", lista1.toString());
+		}
+
+		@Test(expected=NoSuchElementException.class)
+		public void removeEx_1() throws EmptyCollectionException{
+			DoubleLinkedListImpl<String> lista1 = new DoubleLinkedListImpl<String>("A");
+			lista1.removePenul();
+		}
+
+		@Test(expected = NoSuchElementException.class)
+		public void removeEx_2() throws EmptyCollectionException{
+			DoubleLinkedListImpl<String> lista1 = new DoubleLinkedListImpl<String>("A", "B", "C","D","E");
+			lista1.removeN("Z", 3);
+		}
+
+		@Test(expected = EmptyCollectionException.class)
+		public void removeEx_3() throws EmptyCollectionException{
+			DoubleLinkedListImpl<String> lista1 = new DoubleLinkedListImpl<String>();
+			lista1.removePos(3);
+		}
+
+		@Test
+		public void removeEx_4() throws EmptyCollectionException{
+			DoubleLinkedListImpl<String> lista1 = new DoubleLinkedListImpl<String>("A","B");
+			lista1.removePenul();
+			Assert.assertEquals("(B )", lista1.toStringFromUntilReverse(1, 1));
+		}
+
+		@Test
+		public void addAfterTest_tergetNoExiste(){
+			DoubleLinkedListImpl<String> lista1 = new DoubleLinkedListImpl<String>("2","3","7");
+			lista1.addAfter("1", "A");
+			Assert.assertEquals("(2 3 7 1 )", lista1.toStringFromUntil(1, 4));
+		}
+
+		@Test
+		public void IteratorPrgressTest(){
+			DoubleLinkedListImpl<String> lista1 = new DoubleLinkedListImpl<String>("A", "B", "C","D","E");
+			Iterator<String> iterator = listaConElems.progressIterator();
+			Assert.assertTrue(iterator.hasNext());
+			Assert.assertEquals("A", iterator.next());
+			Assert.assertTrue(iterator.hasNext());
+			Assert.assertEquals("B", iterator.next());
+			Assert.assertTrue(iterator.hasNext());
+			Assert.assertEquals("E", iterator.next());
+			Assert.assertFalse(iterator.hasNext());
+
+		}
+
 }

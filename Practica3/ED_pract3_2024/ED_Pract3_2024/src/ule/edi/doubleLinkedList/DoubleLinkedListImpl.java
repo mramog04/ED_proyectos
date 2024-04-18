@@ -90,7 +90,7 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 	@SuppressWarnings("hiding")
 	private class DoubleLinkedListProgressIterator<T> implements Iterator<T> {
 		DoubleNode<T> node;
-		int cont=0,incr=1;
+		int cont=0;
 		public DoubleLinkedListProgressIterator(DoubleNode<T> aux) {
 			// TODO	
 			node=aux;
@@ -108,18 +108,14 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 			if(!hasNext()){
 				throw new NoSuchElementException();
 			}
-			T value = node.elem;
 			for (int i = 0; i < cont; i++) {
 				if (node == null) {
 					break;
 				}
 				node = node.next;
 			}
+			T value = node.elem;
 			cont++;
-			if (node == null) {
-				node = node.next;
-				cont = ++incr + 1;
-			}
 			return value;
 		}
 	}
@@ -348,11 +344,11 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 	@Override
 	public T removePos(int pos)  throws EmptyCollectionException{
 		// TODO
-		if(pos < 1 || pos >size()){
-			throw new IllegalArgumentException();
-		}
 		if(isEmpty()){
 			throw new EmptyCollectionException(null);
+		}
+		if(pos < 1 || pos >size()){
+			throw new IllegalArgumentException();
 		}
 		DoubleNode<T> current = this.front;
 		if(size()==1){
@@ -413,6 +409,9 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 			}
 	
 			current = current.next;
+		}
+		if(contador==0){
+			throw new NoSuchElementException();
 		}
 		return contador;
 	}
@@ -506,8 +505,8 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 		DoubleNode<T> nextNode = current.next;
 		current.next = newNode;
 		newNode.prev = current;
-		newNode.next = nextNode;
 		if (nextNode != null) {
+			newNode.next = nextNode;
 			nextNode.prev = newNode;
 		} else {
 			this.last = newNode;
@@ -547,7 +546,10 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 	@Override
 	public T removePenul() throws EmptyCollectionException {
 		// TODO Auto-generated method stub
-		if (size() < 2) {
+		if(isEmpty()){
+			throw new EmptyCollectionException(null);
+		}
+		if (size()<2) {
 			throw new NoSuchElementException("No hay suficientes elementos para eliminar el penúltimo");
 		}
 		
