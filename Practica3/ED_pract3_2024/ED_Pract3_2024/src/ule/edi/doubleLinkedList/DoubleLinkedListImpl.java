@@ -87,13 +87,15 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 	}
 	
 	// TODO: añadir clases para el resto de iteradores
+	//Aqui hay un fallo que no encuentro
 	@SuppressWarnings("hiding")
 	private class DoubleLinkedListProgressIterator<T> implements Iterator<T> {
 		DoubleNode<T> node;
-		int cont=0;
+		int skip;
 		public DoubleLinkedListProgressIterator(DoubleNode<T> aux) {
 			// TODO	
 			node=aux;
+			skip = 1;
 			}
 
 		@Override
@@ -108,14 +110,14 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 			if(!hasNext()){
 				throw new NoSuchElementException();
 			}
-			for (int i = 0; i < cont; i++) {
+			T value = node.elem;
+			for (int i = 0; i < skip; i++) {
 				if (node == null) {
 					break;
 				}
 				node = node.next;
 			}
-			T value = node.elem;
-			cont++;
+			skip++;
 			return value;
 		}
 	}
@@ -132,7 +134,7 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 		@Override
 		public boolean hasNext() {
 			// TODO	
-			return node!=null && node.prev!=null;
+			return node!=null;
 			}
 
 		@Override
@@ -526,8 +528,10 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 		}
 	
 		DoubleNode<T> current = this.front;
+		boolean found = false;
 		while (current != null) {
 			if (current.elem.equals(target)) {
+				found=true;
 				DoubleNode<T> newNode = new DoubleNode<T>(elem);
 				DoubleNode<T> nextNode = current.next;
 				current.next = newNode;
@@ -539,6 +543,16 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 				current = newNode; 
 			}
 			current = current.next;
+		}
+
+		if(!found){
+			DoubleNode<T> newNode = new DoubleNode<T>(elem);
+			this.last.next = newNode;
+			newNode.prev = this.last;
+			this.last = newNode;
+		}
+		if (this.last.next != null) {
+        this.last = this.last.next;
 		}
 	}
 
@@ -610,12 +624,6 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 			throw new NullPointerException("La lista pasada como parámetro es nula");
 		}
 	
-		int thisSize = size();
-		int otherSize = other.size();
-	
-		if (thisSize != otherSize) {
-			return false;
-		}
 	
 		DoubleLinkedListImpl<T> otherCopy = new DoubleLinkedListImpl<>();
 		for (T elem : other) {
@@ -691,6 +699,9 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 	@Override
 	public String toString() {
 		// TODO
+		if (isEmpty()) {
+			return "()";
+		}
 		StringBuilder sb = new StringBuilder();
 		DoubleNode<T> current = this.front;
 		sb.append("(");
@@ -711,6 +722,7 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 
 		StringBuilder sb = new StringBuilder();
 		DoubleNode<T> current_ex = this.front; 
+
 		if(size()==1){
 			sb.append("("+current_ex.elem+" )");
 			return sb.toString();
@@ -720,7 +732,7 @@ public class DoubleLinkedListImpl<T> implements DoubleList<T> {
 	
 		DoubleNode<T> current = this.last; 
 		while (current != null) { 
-			sb.append(current.elem+" ");
+			sb.append(current.elem).append(" ");
 			current = current.prev; 
 		}
 	

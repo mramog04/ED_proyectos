@@ -605,7 +605,7 @@ public class DoubleLinkedImplTest {
 		@Test
 		public void testAddAfterAllInexistente(){
 			listaConElems.addAfterAll("3", "Z");
-			Assert.assertEquals("(A B C A B D )", listaConElems.toString());
+			Assert.assertEquals("(A B C A B D 3 )", listaConElems.toString());
 		}
 
 		@Test
@@ -669,15 +669,157 @@ public class DoubleLinkedImplTest {
 		@Test
 		public void IteratorPrgressTest(){
 			DoubleLinkedListImpl<String> lista1 = new DoubleLinkedListImpl<String>("A", "B", "C","D","E");
-			Iterator<String> iterator = listaConElems.progressIterator();
+			Iterator<String> iterator = lista1.progressIterator();
 			Assert.assertTrue(iterator.hasNext());
 			Assert.assertEquals("A", iterator.next());
 			Assert.assertTrue(iterator.hasNext());
 			Assert.assertEquals("B", iterator.next());
 			Assert.assertTrue(iterator.hasNext());
-			Assert.assertEquals("E", iterator.next());
+			Assert.assertEquals("D", iterator.next());
 			Assert.assertFalse(iterator.hasNext());
-
 		}
+
+		@Test
+		public void testAddAfterAll_TargetNotPresent() {
+			DoubleLinkedListImpl<Integer> lista = new DoubleLinkedListImpl<>(1, 2, 3);
+		
+			// Agregar el elemento 4 después de todas las apariciones de 5 (que no está presente)
+			lista.addAfterAll(4, 5);
+		
+			// La lista debería tener el elemento 4 agregado al final
+			Assert.assertEquals("(1 2 3 4 )", lista.toString());
+			Assert.assertEquals(4, lista.size());
+		}
+
+		@Test
+		public void testAddAfterAll_TargetPresent() {
+			DoubleLinkedListImpl<Integer> lista = new DoubleLinkedListImpl<>(1, 2, 3, 2, 4);
+		
+			// Agregar el elemento 5 después de todas las apariciones del 2
+			lista.addAfterAll(5, 2);
+		
+			// La lista debería tener el elemento 5 agregado después de todas las apariciones del 2
+			Assert.assertEquals("(1 2 5 3 2 5 4 )", lista.toString());
+			Assert.assertEquals(7, lista.size());
+		}
+
+		@Test
+		public void testToStringReverse_2() {
+			DoubleLinkedListImpl<Integer> lista = new DoubleLinkedListImpl<>(1, 2, 3, 4, 5);
+		
+			// Verificar que toStringReverse imprime correctamente la lista en orden inverso
+			Assert.assertEquals("(5 4 3 2 1 )", lista.toStringReverse());
+		}
+		
+		@Test
+		public void testAddAfterAll_AddElementAtEnd_CheckReverseOrder() {
+			DoubleLinkedListImpl<Integer> lista = new DoubleLinkedListImpl<>(1, 2, 3, 2, 4);
+		
+			// Agregar el elemento 5 después de todas las apariciones del 7 (no presente)
+			lista.addAfterAll(5, 7);
+		
+			// La lista debería tener el elemento 5 agregado al final
+			Assert.assertEquals("(1 2 3 2 4 5 )", lista.toString());
+			Assert.assertEquals(6, lista.size());
+		
+			// Verificar que toStringReverse imprime correctamente la lista en orden inverso
+			Assert.assertEquals("(5 4 2 3 2 1 )", lista.toStringReverse());
+		}
+		
+		@Test
+		public void testAddAfterAll_AddElementAtEnd_CheckReverseOrder_2() {
+			DoubleLinkedListImpl<Integer> lista = new DoubleLinkedListImpl<>(1, 2, 3, 4, 2);
+		
+			// Agregar el elemento 5 después de todas las apariciones del 2 (último elemento)
+			lista.addAfterAll(5, 2);
+		
+			// La lista debería tener el elemento 5 agregado al final
+			Assert.assertEquals("(1 2 5 3 4 2 5 )", lista.toString());
+			Assert.assertEquals(7, lista.size());
+		
+			// Verificar que toStringReverse imprime correctamente la lista en orden inverso
+			Assert.assertEquals("(5 2 4 3 5 2 1 )", lista.toStringReverse());
+		}
+		
+		@Test
+		public void testEmptyList() {
+			DoubleLinkedListImpl<Integer> lista = new DoubleLinkedListImpl<>();
+			Iterator<Integer> iterator = lista.progressReverseIterator();
+	
+			Assert.assertFalse(iterator.hasNext());
+		}
+
+		@Test
+		public void testSingleElementList() {
+			DoubleLinkedListImpl<Integer> lista = new DoubleLinkedListImpl<>(1);
+			Iterator<Integer> iterator = lista.progressReverseIterator();
+	
+			Assert.assertTrue(iterator.hasNext());
+			Assert.assertEquals(Integer.valueOf(1), iterator.next());
+			Assert.assertFalse(iterator.hasNext());
+		}
+		
+
+		
+		@Test(expected = NoSuchElementException.class)
+		public void testNextPastEndOfList() {
+			DoubleLinkedListImpl<Integer> lista = new DoubleLinkedListImpl<>(1, 2, 3, 4, 5);
+			Iterator<Integer> iterator = lista.progressReverseIterator();
+	
+			while (iterator.hasNext()) {
+				iterator.next();
+			}
+	
+			// Debería lanzar una excepción NoSuchElementException
+			iterator.next();
+		}
+	
+		@Test(expected = NoSuchElementException.class)
+		public void testNextOnEmptyList() {
+			DoubleLinkedListImpl<Integer> lista = new DoubleLinkedListImpl<>();
+			Iterator<Integer> iterator = lista.progressReverseIterator();
+	
+			// Debería lanzar una excepción NoSuchElementException
+			iterator.next();
+		}
+
+		@Test
+		public void testRemovePenul_TwoAndThreeElements() throws EmptyCollectionException {
+			// Lista con dos elementos
+			DoubleLinkedListImpl<Integer> listaDos = new DoubleLinkedListImpl<>(1, 2);
+			listaDos.removePenul();
+			// Verificar que el tamaño de la lista sea 1 después de eliminar el penúltimo elemento
+			Assert.assertEquals(1, listaDos.size());
+			// Verificar que la representación de la lista sea correcta
+			Assert.assertEquals("(2 )", listaDos.toString());
+			Assert.assertEquals("(2 )", listaDos.toStringReverse());
+			
+			// Lista con tres elementos
+			DoubleLinkedListImpl<Integer> listaTres = new DoubleLinkedListImpl<>(1, 2, 3);
+			listaTres.removePenul();
+			// Verificar que el tamaño de la lista sea 2 después de eliminar el penúltimo elemento
+			Assert.assertEquals(2, listaTres.size());
+			// Verificar que la representación de la lista sea correcta
+			Assert.assertEquals("(1 3 )", listaTres.toString());
+			Assert.assertEquals("(3 1 )", listaTres.toStringReverse());
+		}
+
+						
+		@Test
+		public void testRemovePenulWithThreeElements() throws EmptyCollectionException {
+			// Lista con tres elementos
+			DoubleLinkedListImpl<String> lista = new DoubleLinkedListImpl<>("A", "B", "C");
+
+			// Verificar que se elimina correctamente el penúltimo elemento "B"
+			Assert.assertEquals("B", lista.removePenul());
+
+			// Verificar que el tamaño de la lista sea 2 después de eliminar el penúltimo elemento
+			Assert.assertEquals(2, lista.size());
+
+			// Verificar que la representación de la lista sea correcta
+			Assert.assertEquals("(A C )", lista.toString());
+			Assert.assertEquals("(C A )", lista.toStringReverse());
+		}
+
 
 }
