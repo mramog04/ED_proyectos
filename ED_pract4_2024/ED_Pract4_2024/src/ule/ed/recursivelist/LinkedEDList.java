@@ -43,7 +43,7 @@ public class LinkedEDList<T> implements EDList<T> {
 		if(current == null){
 			return 0;
 		}else{
-			return 1 + size(current.next);
+			return 1 + sizeRec(current.next);
 		}
 	}
 
@@ -56,11 +56,11 @@ public class LinkedEDList<T> implements EDList<T> {
 		addLastRec(this.front, newNode);
 	}
 
-	private Node<T> addLastRec(Node<T> current,Node<T> newNode){
+	private void addLastRec(Node<T> current,Node<T> newNode){
 		if(size()==0){
-			current=newNode
+			current=newNode;
 		}else if(current.next==null){
-			current.next=newNode
+			current.next=newNode;
 		}else{
 			addLastRec(current.next, newNode);
 		}
@@ -70,7 +70,16 @@ public class LinkedEDList<T> implements EDList<T> {
 	@Override
 	public void addPos(T elem, int position) {
 		// TODO RECURSIVAMENTE
-		
+		elemNull(elem);
+		if(position<=0){
+			throw new IllegalArgumentException();
+		}
+		Node<T> newNode =  new Node<T>(elem);
+		addPosRec(this.front,newNode,position);
+	}
+
+	private void addPosRec(Node<T> current,Node<T> newNode,int pos){
+
 	}
 
 	@Override
