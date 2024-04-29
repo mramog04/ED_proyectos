@@ -7,10 +7,18 @@ import org.junit.*;
 
 public class LinkedEDListTest {
 	private LinkedEDList<String> lista;
+	private LinkedEDList<String> lista_num;
 	
 	@Before
 	public void test() {
 		 lista= new LinkedEDList<String>();
+		 lista_num = new LinkedEDList<String>();
+		 lista_num.addLast("6");
+		 lista_num.addLast("5");
+		 lista_num.addLast("4");
+		 lista_num.addLast("3");
+		 lista_num.addLast("2");
+		 lista_num.addLast("1");
 	}
 
 	@Test
@@ -54,7 +62,10 @@ public class LinkedEDListTest {
 		
 	}
 	
-	// TODO  AÑADIR RESTO DE METODOS DE TESTS
+	@Test 
+	public void getElemPosTest(){
+		Assert.assertEquals("2", lista_num.getElemPos(2));
+	}
 	
 	
 }

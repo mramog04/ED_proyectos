@@ -29,7 +29,7 @@ public class LinkedEDList<T> implements EDList<T> {
 	@Override
 	public boolean isEmpty() {
 		// TODO 
-		return (this.front==null)? true:false;
+		return this.front==null;
 	}
 
 
@@ -58,7 +58,7 @@ public class LinkedEDList<T> implements EDList<T> {
 
 	private void addLastRec(Node<T> current,Node<T> newNode){
 		if(size()==0){
-			current=newNode;
+			this.front=newNode;//puede ser que aqui vaya un this.front = newNode;
 		}else if(current.next==null){
 			current.next=newNode;
 		}else{
@@ -75,11 +75,22 @@ public class LinkedEDList<T> implements EDList<T> {
 			throw new IllegalArgumentException();
 		}
 		Node<T> newNode =  new Node<T>(elem);
-		addPosRec(this.front,newNode,position);
+		addPosRec(this.front,newNode,position-1,1);
 	}
 
-	private void addPosRec(Node<T> current,Node<T> newNode,int pos){
-
+	private void addPosRec(Node<T> current,Node<T> newNode,int pos,int aux){
+		if(pos>size()){
+			addLast(newNode.elem);
+		}else if(pos == 0){
+			this.front=newNode;
+			newNode.next=current;
+		}else if(aux==pos){
+			newNode.next=current.next;
+			current.next=newNode;
+		}else{
+			aux++;
+			addPosRec(current.next, newNode,pos, aux);
+		}
 	}
 
 	@Override
@@ -91,9 +102,21 @@ public class LinkedEDList<T> implements EDList<T> {
 	@Override
 	public T getElemPos(int position) {
 		// TODO RECURSIVAMENTE
+		if(position<1 || position > size()){
+			throw new IllegalArgumentException();
+		}
+		getElemPosRec(position,1 , this.front);
 		return null;
 	}
-
+	//muy probable que esto este mal hecho.
+	private T getElemPosRec(int position,int aux,Node<T> current){
+		Node<T> resultNode = current;
+		if(position!=aux){
+			aux++;
+			resultNode = new Node<T>(getElemPosRec(position, aux, current.next));
+		}
+		return resultNode.elem;
+	}
 
 
 	@Override
@@ -179,12 +202,19 @@ public class LinkedEDList<T> implements EDList<T> {
 		// TODO Auto-generated method stub
 		return 0;
 	}
-
+	//hay que hacer el toString de forma recursiva esto demomento es para ir omprobando los test
 	@Override
 	public String toString() {
 		// TODO RECURSIVAMENTE
-	
-		return null;
+		StringBuilder sb = new StringBuilder();
+		Node<T> current = this.front;
+		sb.append("(");
+		while(current!=null){
+			sb.append(current.elem+" ");
+			current=current.next;
+		}
+		sb.append(")");
+		return sb.toString();
 	}
 
 
