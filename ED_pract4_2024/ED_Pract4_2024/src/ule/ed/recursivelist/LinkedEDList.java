@@ -1,5 +1,6 @@
 package ule.ed.recursivelist;
 
+import java.util.NoSuchElementException;
 
 public class LinkedEDList<T> implements EDList<T> {
 
@@ -25,6 +26,19 @@ public class LinkedEDList<T> implements EDList<T> {
 			throw new NullPointerException();
 		}
 	}
+
+	private void addFirst(T elem) {
+        Node<T> newNode = new Node<T>(elem);
+        if (front == null) {
+            front = newNode;
+        } else {
+            Node<T> aux = front;
+            while (aux.next != null) {
+                aux = aux.next;
+            }
+            aux.next = newNode;
+        }
+    }
 
 	@Override
 	public boolean isEmpty() {
@@ -122,59 +136,162 @@ public class LinkedEDList<T> implements EDList<T> {
 	@Override
 	public int getPosFirst(T elem) {
 		// TODO RECURSIVAMENTE
-		return 0;
+		elemNull(elem);
+		return getPosFirstRec(this.front, elem, 1);
 	}
 
 
+	private int getPosFirstRec(Node<T> nodo, T elem, int pos) {
+        if (nodo == null) {
+            throw new NoSuchElementException("El elemento no está en la lista.");
+        }
+        if (nodo.elem.equals(elem)) {
+            return pos;
+        }
+        return getPosFirstRec(nodo.next, elem, pos + 1);
+    }
 
 	@Override
 	public int getPosLast(T elem) {
 		// TODO RECURSIVAMENTE
-		return 0;
+		elemNull(elem);
+		return getPosLastRec(this.front, elem, 1, -1);
 	}
 
+	private int getPosLastRec(Node<T> current, T elem, int pos, int lastPos) {
+        if (current == null) {
+            if (lastPos == -1) {
+                throw new NoSuchElementException("El elemento no está en la lista.");
+            }
+            return lastPos;
+        }
+        if (current.elem.equals(elem)) {
+            lastPos = pos;
+        }
+        return getPosLastRec(current.next, elem, pos + 1, lastPos);
+    }
 
 
 	@Override
 	public T removelast() throws EmptyCollectionException {
 		// TODO RECURSIVAMENTE
-		return null;
+		if(front==null){
+			throw new EmptyCollectionException(null);
+		}
+		return removeLastRec(this.front);
 	}
+
+	private T removeLastRec(Node<T> current) {
+        if (current.next == null) {
+            T valor = current.elem;
+            front = null; // Si el nodo actual es el último, la lista queda vacía
+            return valor;
+        }
+        if (current.next.next == null) {
+            T valor = current.next.elem;
+            current.next = null; // Si el siguiente nodo es el último, se elimina
+            return valor;
+        }
+        return removeLastRec(current.next);
+    }
 
 
 
 	
 
 	@Override
-	public T removeLastElem(T elem) {
+	public int removeLastElem(T elem) {
 		// TODO RECURSIVAMENTE
-		return null;
+		if(this.front==null){
+			throw new NoSuchElementException();
+		}
+		if(front.next==null){
+			if(front.elem.equals(elem)){
+				front=null;
+				return 1;
+			}else{
+				throw new NoSuchElementException();
+			}
+		}
+		return removeLastElemRec(front, null, elem, 1);
 	}
 
-
+	private int removeLastElemRec(Node<T> current, Node<T> prev, T elem, int pos) {
+        if (current.next == null) {
+            if (current.elem.equals(elem)) {
+                if (prev != null) {
+                    prev.next = null;
+                } else {
+                    front = null;
+                }
+                return pos;
+            } else {
+                throw new NoSuchElementException("La lista no contiene el elemento especificado.");
+            }
+        }
+        if (current.next.elem.equals(elem)) {
+            return removeLastElemRec(current.next, current, elem, pos + 1);
+        }
+        return removeLastElemRec(current.next, prev, elem, pos);
+    }
 
 	@Override
 	public EDList<T> reverse() {
 		// TODO RECURSIVAMENTE
-		return null;
+		EDList<T> reverseList = new EDList<>();//no se como iniciar esto la vrd
+		reverseRecursive(this.front, reverseList);
+		return reverseList;
 	}
+
+	private void reverseRecursive(Node<T> current, EDList<T> reverseList) {
+        if (current == null) {
+            return;
+        }
+		reverseList.addPos(current.elem,1);
+        reverseRecursive(current.next, reverseList);
+    }
 
 
 
 	@Override
 	public int removeOddElements(){
 		// TODO RECURSIVAMENTE
-		return 0;
+		return removeOddRec(front, null, 1);
 	}
 
+	private int removeOddRec(Node<T> current, Node<T> prev, int pos) {
+        if (current == null) {
+            return 0;
+        }
+        if (pos % 2 != 0) {
+            if (prev != null) {
+                prev.next = current.next;
+            } else {
+                front = current.next;
+            }
+            return 1 + removeOddRec(current.next, prev, pos + 1);
+        }
+        return removeOddRec(current.next, current, pos + 1);
+    }
 
 
 	@Override
 	public int removeConsecDuplicates() {
 		// TODO RECURSIVAMENTE
-		return 0;
+		return removeConsecDuplicatesRec(this.front);
 	}
 
+	private int removeConsecDuplicatesRec(Node<T> current) {
+        if (current == null || current.next == null) {
+            return 0;
+        }
+        if (current.elem.equals(current.next.elem)) {
+            Node<T> nextNode = current.next;
+            current.next = nextNode.next;
+            return 1 + removeConsecDuplicatesRec(current);
+        }
+        return removeConsecDuplicatesRec(current.next);
+    }
 
 
 	@Override
@@ -206,18 +323,18 @@ public class LinkedEDList<T> implements EDList<T> {
 	@Override
 	public String toString() {
 		// TODO RECURSIVAMENTE
-		StringBuilder sb = new StringBuilder();
-		Node<T> current = this.front;
-		sb.append("(");
-		while(current!=null){
-			sb.append(current.elem+" ");
-			current=current.next;
-		}
-		sb.append(")");
-		return sb.toString();
+		return "(" + toStringRecursive(this.front) + ")";
 	}
 
-
+	private String toStringRecursive(Node<T> current) {
+		if (current == null) {
+			return "";
+		}
+		if (current.next == null) {
+			return current.elem.toString();
+		}
+		return current.elem + " " + toStringRecursive(current.next);
+	}
 	
 
 	

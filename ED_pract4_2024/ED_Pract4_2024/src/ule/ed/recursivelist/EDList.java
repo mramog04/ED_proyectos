@@ -154,7 +154,6 @@ public interface EDList<T> {
 	 * 
 	 */
 	public T removelast() throws EmptyCollectionException;
-
 	
 	/**
 	 * TODO RECURSIVO:
@@ -207,7 +206,7 @@ public interface EDList<T> {
 primera	 * <p>
 	 * TODO RECURSIVO: Elimina la última aparición del elemento y devuelve la posición en la que estaba.
      * Si l contiene (A B C B ) y hacemos l.removeLastElem("B") la lista
-	 * quedará (A C B ) y devolverá 4
+	 * quedará (A B C ) y devolverá 4
 	 * 
 	 * @param elem el elemento a eliminar
 	 * @return pos del elemento eliminado
@@ -215,7 +214,7 @@ primera	 * <p>
 	 * @throws NoSuchElementException   si la lista no contiene el elemento
 	 * 
 	 */
-	public T removeLastElem(T elem);
+	public int removeLastElem(T elem);
 
 
 	/**
