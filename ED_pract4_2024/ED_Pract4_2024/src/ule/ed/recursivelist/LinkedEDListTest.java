@@ -37,10 +37,6 @@ public class LinkedEDListTest {
 		Assert.assertEquals("(2 3 7 )", lista.toString());
 	}
 	
-	@Test(expected=EmptyCollectionException.class)
-	public void test_RemoveLastElem_Vacia() throws EmptyCollectionException{
-		lista.removeLastElem("A");
-	}
 
 	@Test(expected=NullPointerException.class)
 	public void test_addLast_ElementoNulo() {

@@ -27,18 +27,7 @@ public class LinkedEDList<T> implements EDList<T> {
 		}
 	}
 
-	private void addFirst(T elem) {
-        Node<T> newNode = new Node<T>(elem);
-        if (front == null) {
-            front = newNode;
-        } else {
-            Node<T> aux = front;
-            while (aux.next != null) {
-                aux = aux.next;
-            }
-            aux.next = newNode;
-        }
-    }
+
 
 	@Override
 	public boolean isEmpty() {
@@ -110,7 +99,30 @@ public class LinkedEDList<T> implements EDList<T> {
 	@Override
 	public boolean addBefore(T elem, T target) {
 		// TODO Auto-generated method stub
-		return false;
+		elemNull(elem);
+		elemNull(target);
+		return addBeforeRec(front, elem, target, false, false);
+	}
+	//probablemente falle algo relacionado con devolver si es true o false
+	private boolean addBeforeRec(Node<T> current,T elem,T target,boolean found,boolean fin){
+		if(found==false && fin == true){
+			addPos(elem, 1);
+			return false;
+		}else if(found == false && fin == false){
+			if(current.elem.equals(target)){
+				Node<T> newNode = new Node<T>(elem);
+				newNode.next=current.next;
+				current.next=newNode;
+				found=true;
+				fin=true;
+			}if(current.next==null){
+				fin = true;
+				addBeforeRec(current, elem, target, found, fin);
+			}else{
+				addBeforeRec(current.next, elem, target, found, fin);
+			}
+		}
+		return true;
 	}
 
 	@Override
@@ -238,7 +250,7 @@ public class LinkedEDList<T> implements EDList<T> {
 	@Override
 	public EDList<T> reverse() {
 		// TODO RECURSIVAMENTE
-		EDList<T> reverseList = new EDList<>();//no se como iniciar esto la vrd
+		LinkedEDList<T> reverseList = new LinkedEDList<>();
 		reverseRecursive(this.front, reverseList);
 		return reverseList;
 	}
@@ -256,10 +268,10 @@ public class LinkedEDList<T> implements EDList<T> {
 	@Override
 	public int removeOddElements(){
 		// TODO RECURSIVAMENTE
-		return removeOddRec(front, null, 1);
+		return removeOddElementsRec(front, null, 1);
 	}
 
-	private int removeOddRec(Node<T> current, Node<T> prev, int pos) {
+	private int removeOddElementsRec(Node<T> current, Node<T> prev, int pos) {
         if (current == null) {
             return 0;
         }
@@ -269,9 +281,9 @@ public class LinkedEDList<T> implements EDList<T> {
             } else {
                 front = current.next;
             }
-            return 1 + removeOddRec(current.next, prev, pos + 1);
+            return 1 + removeOddElementsRec(current.next, prev, pos + 1);
         }
-        return removeOddRec(current.next, current, pos + 1);
+        return removeOddElementsRec(current.next, current, pos + 1);
     }
 
 
@@ -304,36 +316,85 @@ public class LinkedEDList<T> implements EDList<T> {
 	@Override
 	public boolean lengthEqualsTo(int n) {
 		// TODO RECURSIVAMENTE
-		return false;
+		if(n>size()){
+			return false;
+		}
+		return lengthEqualsToRec(this.front, n);
+	}
+
+	private boolean lengthEqualsToRec(Node<T> current,int n){
+		if(current!=null && n!=0){
+			lengthEqualsToRec(current.next, n-1);
+		}else if(current!=null && n==0){
+			return false;
+		}
+		return true;
 	}
 
 	@Override
 	public int removeEvenElements() {
 		// TODO Auto-generated method stub
-		return 0;
+		return removeEvenElementsRec(front, null, 1);
+	}
+	//puede ser que este metodo este mal
+	private int removeEvenElementsRec(Node<T> current, Node<T> prev, int pos){
+		if (current == null) {
+            return 0;
+        }
+        if (pos % 2 == 0) {
+            if (prev != null) {
+                prev.next = current.next;
+            } else {
+                front = current.next;
+            }
+            return 1 + removeEvenElementsRec(current.next, prev, pos + 1);
+        }
+        return removeEvenElementsRec(current.next, current, pos + 1);
 	}
 
 
 	@Override
 	public int removeFirstElem(T elem) {
 		// TODO Auto-generated method stub
-		return 0;
+		return removeFirstElemRec(front, front, elem, false, 0);
 	}
-	//hay que hacer el toString de forma recursiva esto demomento es para ir omprobando los test
+
+	private int removeFirstElemRec(Node<T> current,Node<T> prev, T elem, boolean found,int contador){
+		if(found == false){
+			if(current.elem.equals(elem)){
+				if(current==this.front){
+					this.front=current.next;
+					found = true;
+					contador = 1;
+				}else{
+					prev.next=current.next;
+					found=true;
+					contador++;
+				}
+			}
+			if(current.next!=null){
+				removeFirstElemRec(current.next, current, elem, found, contador);
+			}else if(found==false){
+				throw new NoSuchElementException();
+			}
+		}
+		return contador;
+	}
+
 	@Override
 	public String toString() {
 		// TODO RECURSIVAMENTE
-		return "(" + toStringRecursive(this.front) + ")";
+		return "(" + toStringRec(this.front) + ")";
 	}
 
-	private String toStringRecursive(Node<T> current) {
+	private String toStringRec(Node<T> current) {
 		if (current == null) {
 			return "";
 		}
 		if (current.next == null) {
 			return current.elem.toString();
 		}
-		return current.elem + " " + toStringRecursive(current.next);
+		return current.elem + " " + toStringRec(current.next);
 	}
 	
 
