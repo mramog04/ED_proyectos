@@ -131,8 +131,7 @@ public class LinkedEDList<T> implements EDList<T> {
 		if(position<1 || position > size()){
 			throw new IllegalArgumentException();
 		}
-		getElemPosRec(position,1 , this.front);
-		return null;
+		return getElemPosRec(position,1 , this.front);
 	}
 	//muy probable que esto este mal hecho.
 	private T getElemPosRec(int position,int aux,Node<T> current){
@@ -392,7 +391,7 @@ public class LinkedEDList<T> implements EDList<T> {
 			return "";
 		}
 		if (current.next == null) {
-			return current.elem.toString();
+			return current.elem.toString()+" ";
 		}
 		return current.elem + " " + toStringRec(current.next);
 	}
