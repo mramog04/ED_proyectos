@@ -126,6 +126,108 @@ public class LinkedEDListTest {
 		assertEquals(2, lista_num.getPosLast("2"));
 	}
 
+	@Test(expected = NullPointerException.class)
+	public void getPosLastExcpTest(){
+		lista_num.getPosLast(null);
+		lista.getPosLast(null);
+	}
+	
+	@Test(expected = NoSuchElementException.class)
+	public void getPosLastExcp2Test(){
+		lista_num.getPosLast("A");
+	}
+
+	@Test
+	public void removeLastTest() throws EmptyCollectionException{
+		assertEquals("(1 2 3 4 5 6 )", lista_num.toString());
+		lista_num.removelast();
+		assertEquals("(1 2 3 4 5 )", lista_num.toString());
+		lista_num.removelast();
+		assertEquals("(1 2 3 4 )", lista_num.toString());
+		lista_num.removelast();
+		assertEquals("(1 2 3 )", lista_num.toString());
+		lista_num.removelast();
+		assertEquals("(1 2 )", lista_num.toString());
+		lista_num.removelast();
+		assertEquals("(1 )", lista_num.toString());
+		lista_num.removelast();
+		assertEquals("()", lista_num.toString());
+	}
+
+	@Test(expected = EmptyCollectionException.class)
+	public void removeLastExcpTest() throws EmptyCollectionException{
+		lista.removelast();
+	}
+
+	@Test
+	public void removeOddElementsTest(){
+		assertEquals(3, lista_num.removeOddElements());
+		assertEquals("(2 4 6 )", lista_num.toString());
+		assertEquals(0, lista.removeOddElements());
+	}
+
+	@Test
+	public void removeEvenElements(){
+		assertEquals(3, lista_num.removeEvenElements());
+		assertEquals("(1 3 5 )", lista_num.toString());
+		assertEquals(0, lista.removeOddElements());
+	}
+
+	@Test
+	public void removeConsecDuplicateTest(){
+		lista_num.addPos("1", 2);
+		lista_num.addPos("1", 2);
+		assertEquals(2, lista_num.removeConsecDuplicates());
+		assertEquals("(1 2 3 4 5 6 )", lista_num.toString());
+		assertEquals(0, lista.removeConsecDuplicates());
+	}
+
+	@Test
+	public void removeFirstElemTest(){
+		lista_num.addLast("1");
+		assertEquals(1,lista_num.removeFirstElem("1"));
+		assertEquals("(2 3 4 5 6 1 )", lista_num.toString());
+		lista_num.addLast("3");
+		assertEquals(2, lista_num.removeFirstElem("3"));
+		assertEquals("(2 4 5 6 1 3 )", lista_num.toString());
+
+		assertEquals(3, lista_num.removeFirstElem("5"));
+		assertEquals("(2 4 6 1 3 )", lista_num.toString());
+
+		assertEquals(4, lista_num.removeFirstElem("1"));
+		assertEquals("(2 4 6 3 )", lista_num.toString());
+
+		assertEquals(4, lista_num.removeFirstElem("3"));
+		assertEquals("(2 4 6 )", lista_num.toString());
+
+		assertEquals(2, lista_num.removeFirstElem("4"));
+		assertEquals("(2 6 )", lista_num.toString());
+
+		assertEquals(2, lista_num.removeFirstElem("6"));
+		assertEquals("(2 )", lista_num.toString());
+
+		assertEquals(1, lista_num.removeFirstElem("2"));
+		assertEquals("()", lista_num.toString());
+	}
+
+	@Test(expected=NoSuchElementException.class)
+	public void removeFirstElemExcpTest(){
+		lista_num.removeFirstElem("A");
+		lista.removeFirstElem("1");
+	}
+
+	/*@Test
+	public void removeLastElemTest(){
+		lista_num.addLast("1");
+		assertEquals(7, lista_num.removeLastElem("1"));
+		assertEquals("(1 2 3 4 5 6 )", lista_num.toString());
+	}*/
+
+
+
+
+
+
 
 
 

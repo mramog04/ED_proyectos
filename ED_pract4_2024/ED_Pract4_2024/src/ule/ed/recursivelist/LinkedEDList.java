@@ -308,7 +308,29 @@ public class LinkedEDList<T> implements EDList<T> {
 	@Override
 	public String toSringExceptFromUntilReverse(int from, int until) {
 		// TODO RECURSIVAMENTE
-		return null;
+		if (from <= 0 || until <= 0 || from < until) {
+			throw new IllegalArgumentException("from y until deben ser mayores que 0, y from debe ser mayor o igual que until");
+		}
+		StringBuilder result = new StringBuilder();
+		result.append("(");		
+		result.append(toSringExceptFromUntilReverseRec(from, until, size(), this.front));		
+		result.append(")");
+		return result.toString();
+	}
+
+	private String toSringExceptFromUntilReverseRec(int from, int until, int currentIndex, Node<T> current) {
+		if (current == null) {
+			return "";
+		}
+		
+		// Verificar si el índice actual está dentro del rango [from, until]
+		if (currentIndex >= from && currentIndex <= until) {
+			// Llamar recursivamente al siguiente nodo sin modificar la cadena resultante
+			return toSringExceptFromUntilReverseRec(from, until, currentIndex - 1, current.next);
+		}
+		
+		// Construir la cadena resultante, insertando el elemento actual seguido de un espacio y llamando recursivamente al siguiente nodo
+		return current.elem + " " + toSringExceptFromUntilReverseRec(from, until, currentIndex - 1, current.next);
 	}
 
 
@@ -351,33 +373,32 @@ public class LinkedEDList<T> implements EDList<T> {
         return removeEvenElementsRec(current.next, current, pos + 1);
 	}
 
-
+	//a lo mejor aqui hay q poner un elemNull
 	@Override
 	public int removeFirstElem(T elem) {
 		// TODO Auto-generated method stub
-		return removeFirstElemRec(front, front, elem, false, 0);
-	}
-
-	private int removeFirstElemRec(Node<T> current,Node<T> prev, T elem, boolean found,int contador){
-		if(found == false){
-			if(current.elem.equals(elem)){
-				if(current==this.front){
-					this.front=current.next;
-					found = true;
-					contador = 1;
-				}else{
-					prev.next=current.next;
-					found=true;
-					contador++;
-				}
-			}
-			if(current.next!=null){
-				removeFirstElemRec(current.next, current, elem, found, contador);
-			}else if(found==false){
-				throw new NoSuchElementException();
-			}
+		if (front == null) {
+			throw new NoSuchElementException("La lista está vacía");//aqui deberia haber un EmptyCollectionException pero bueno...
 		}
-		return contador;
+		
+		if (front.elem.equals(elem)) {
+			front = front.next;
+			return 1;
+		}
+		
+		return removeFirstElemRec(front, elem);	}
+
+	private int removeFirstElemRec(Node<T> current, T elem){
+		if (current == null || current.next == null) {
+			throw new NoSuchElementException("Elemento no encontrado en la lista");
+		}
+		
+		if (current.next.elem.equals(elem)) {
+			current.next = current.next.next;
+			return 2;
+		}
+		
+		return 1 + removeFirstElemRec(current.next, elem);
 	}
 
 	@Override
