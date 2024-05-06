@@ -216,12 +216,23 @@ public class LinkedEDListTest {
 		lista.removeFirstElem("1");
 	}
 
-	/*@Test
+	@Test
 	public void removeLastElemTest(){
 		lista_num.addLast("1");
 		assertEquals(7, lista_num.removeLastElem("1"));
 		assertEquals("(1 2 3 4 5 6 )", lista_num.toString());
-	}*/
+		lista_num.addLast("2");
+		lista_num.addLast("1");
+		lista_num.removeLastElem("2");
+		assertEquals("(1 2 3 4 5 6 2 1 )", lista_num.toString());
+	}
+
+	@Test
+	public void TestAddBeforEmptyList(){
+		lista.addBefore("1", "1");
+	}
+
+	
 
 
 

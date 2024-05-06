@@ -101,6 +101,10 @@ public class LinkedEDList<T> implements EDList<T> {
 		// TODO Auto-generated method stub
 		elemNull(elem);
 		elemNull(target);
+		if(this.front == null){
+			addLast(elem);
+			return false;
+		}
 		return addBeforeRec(front, elem, target, false, false);
 	}
 	//probablemente falle algo relacionado con devolver si es true o false
@@ -213,38 +217,39 @@ public class LinkedEDList<T> implements EDList<T> {
 	@Override
 	public int removeLastElem(T elem) {
 		// TODO RECURSIVAMENTE
-		if(this.front==null){
+		elemNull(elem);
+		if (this.front == null) {
 			throw new NoSuchElementException();
 		}
-		if(front.next==null){
-			if(front.elem.equals(elem)){
-				front=null;
-				return 1;
-			}else{
-				throw new NoSuchElementException();
-			}
+		int[] pos = {0}; // Utilizamos un array para almacenar la posición y mantenerla mutable
+		if (removeLastElemRec(front, null, elem, pos)) {
+			return pos[0]+1; // Devolvemos la posición almacenada en el array
+		} else {
+			throw new NoSuchElementException("La lista no contiene el elemento especificado.");
 		}
-		return removeLastElemRec(front, null, elem, 1);
 	}
 
-	private int removeLastElemRec(Node<T> current, Node<T> prev, T elem, int pos) {
-        if (current.next == null) {
-            if (current.elem.equals(elem)) {
-                if (prev != null) {
-                    prev.next = null;
-                } else {
-                    front = null;
-                }
-                return pos;
-            } else {
-                throw new NoSuchElementException("La lista no contiene el elemento especificado.");
-            }
-        }
-        if (current.next.elem.equals(elem)) {
-            return removeLastElemRec(current.next, current, elem, pos + 1);
-        }
-        return removeLastElemRec(current.next, prev, elem, pos);
-    }
+	private boolean removeLastElemRec(Node<T> current, Node<T> prev, T elem, int[] pos) {
+		if (current == null) {
+			return false; // No se encontró el elemento en la lista
+		}
+		boolean removed = removeLastElemRec(current.next, current, elem, pos); // Llamada recursiva para buscar el elemento
+		if (removed) {
+			pos[0]++; // Incrementamos la posición solo si se elimina el elemento
+		}
+		if (current.elem.equals(elem)) {
+			if (current.next == null) {
+				if (prev != null) {
+					prev.next = null;
+				} else {
+					front = null;
+				}
+				return true; // Se eliminó el último elemento
+			}
+			return true; // Se eliminó un elemento antes del último
+		}
+		return removed;
+	}
 
 	@Override
 	public EDList<T> reverse() {
@@ -313,7 +318,7 @@ public class LinkedEDList<T> implements EDList<T> {
 		}
 		StringBuilder result = new StringBuilder();
 		result.append("(");		
-		result.append(toSringExceptFromUntilReverseRec(from, until, size(), this.front));		
+		result.append(toSringExceptFromUntilReverseRec(from, until, 0, this.front));		
 		result.append(")");
 		return result.toString();
 	}
@@ -324,13 +329,13 @@ public class LinkedEDList<T> implements EDList<T> {
 		}
 		
 		// Verificar si el índice actual está dentro del rango [from, until]
-		if (currentIndex >= from && currentIndex <= until) {
+		if (currentIndex < from && currentIndex >= until) {
 			// Llamar recursivamente al siguiente nodo sin modificar la cadena resultante
-			return toSringExceptFromUntilReverseRec(from, until, currentIndex - 1, current.next);
+			return current.elem + " " + toSringExceptFromUntilReverseRec(from,until,currentIndex+1,current.next);
 		}
 		
 		// Construir la cadena resultante, insertando el elemento actual seguido de un espacio y llamando recursivamente al siguiente nodo
-		return current.elem + " " + toSringExceptFromUntilReverseRec(from, until, currentIndex - 1, current.next);
+		return toSringExceptFromUntilReverseRec(from, until, currentIndex + 1, current.next);
 	}
 
 
@@ -377,6 +382,7 @@ public class LinkedEDList<T> implements EDList<T> {
 	@Override
 	public int removeFirstElem(T elem) {
 		// TODO Auto-generated method stub
+		elemNull(elem);
 		if (front == null) {
 			throw new NoSuchElementException("La lista está vacía");//aqui deberia haber un EmptyCollectionException pero bueno...
 		}
