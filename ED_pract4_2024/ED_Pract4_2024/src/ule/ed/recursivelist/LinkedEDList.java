@@ -199,12 +199,12 @@ public class LinkedEDList<T> implements EDList<T> {
 	private T removeLastRec(Node<T> current) {
         if (current.next == null) {
             T valor = current.elem;
-            front = null; // Si el nodo actual es el último, la lista queda vacía
+            front = null; 
             return valor;
         }
         if (current.next.next == null) {
             T valor = current.next.elem;
-            current.next = null; // Si el siguiente nodo es el último, se elimina
+            current.next = null; 
             return valor;
         }
         return removeLastRec(current.next);
@@ -221,9 +221,9 @@ public class LinkedEDList<T> implements EDList<T> {
 		if (this.front == null) {
 			throw new NoSuchElementException();
 		}
-		int[] pos = {0}; // Utilizamos un array para almacenar la posición y mantenerla mutable
+		int[] pos = {0}; 
 		if (removeLastElemRec(front, null, elem, pos)) {
-			return pos[0]+1; // Devolvemos la posición almacenada en el array
+			return pos[0]+1;
 		} else {
 			throw new NoSuchElementException("La lista no contiene el elemento especificado.");
 		}
@@ -231,11 +231,11 @@ public class LinkedEDList<T> implements EDList<T> {
 
 	private boolean removeLastElemRec(Node<T> current, Node<T> prev, T elem, int[] pos) {
 		if (current == null) {
-			return false; // No se encontró el elemento en la lista
+			return false; 
 		}
-		boolean removed = removeLastElemRec(current.next, current, elem, pos); // Llamada recursiva para buscar el elemento
+		boolean removed = removeLastElemRec(current.next, current, elem, pos);
 		if (removed) {
-			pos[0]++; // Incrementamos la posición solo si se elimina el elemento
+			pos[0]++; 
 		}
 		if (current.elem.equals(elem)) {
 			if (current.next == null) {
@@ -244,9 +244,9 @@ public class LinkedEDList<T> implements EDList<T> {
 				} else {
 					front = null;
 				}
-				return true; // Se eliminó el último elemento
+				return true; 
 			}
-			return true; // Se eliminó un elemento antes del último
+			return true; 
 		}
 		return removed;
 	}
@@ -328,13 +328,10 @@ public class LinkedEDList<T> implements EDList<T> {
 			return "";
 		}
 		
-		// Verificar si el índice actual está dentro del rango [from, until]
 		if (currentIndex < from && currentIndex >= until) {
-			// Llamar recursivamente al siguiente nodo sin modificar la cadena resultante
 			return current.elem + " " + toSringExceptFromUntilReverseRec(from,until,currentIndex+1,current.next);
 		}
 		
-		// Construir la cadena resultante, insertando el elemento actual seguido de un espacio y llamando recursivamente al siguiente nodo
 		return toSringExceptFromUntilReverseRec(from, until, currentIndex + 1, current.next);
 	}
 
