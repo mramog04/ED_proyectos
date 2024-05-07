@@ -105,6 +105,13 @@ public class LinkedEDList<T> implements EDList<T> {
 			addLast(elem);
 			return false;
 		}
+		if(this.front.elem.equals(target)){
+			addPos(elem, 1);
+		}
+		for(int i = 0; i<size();i++){
+			//hacer comparaciones aprovechando el getPosElem
+		}
+		
 		return addBeforeRec(front, elem, target, false, false);
 	}
 	//probablemente falle algo relacionado con devolver si es true o false
@@ -112,19 +119,19 @@ public class LinkedEDList<T> implements EDList<T> {
 		if(found==false && fin == true){
 			addPos(elem, 1);
 			return false;
-		}else if(found == false && fin == false){
-			if(current.elem.equals(target)){
+		}else if(found == false && fin == false && current.next!=null){
+			if(current.next.elem.equals(target)){
 				Node<T> newNode = new Node<T>(elem);
 				newNode.next=current.next;
 				current.next=newNode;
 				found=true;
 				fin=true;
-			}if(current.next==null){
-				fin = true;
-				addBeforeRec(current, elem, target, found, fin);
 			}else{
 				addBeforeRec(current.next, elem, target, found, fin);
 			}
+		}else if(current.next==null){
+			fin = true;
+			addBeforeRec(current, elem, target, found, fin);
 		}
 		return true;
 	}
@@ -316,23 +323,29 @@ public class LinkedEDList<T> implements EDList<T> {
 		if (from <= 0 || until <= 0 || from < until) {
 			throw new IllegalArgumentException("from y until deben ser mayores que 0, y from debe ser mayor o igual que until");
 		}
-		StringBuilder result = new StringBuilder();
-		result.append("(");		
-		result.append(toSringExceptFromUntilReverseRec(from, until, 0, this.front));		
-		result.append(")");
-		return result.toString();
+		
+		LinkedEDList<T> lista = new LinkedEDList<T>();
+		toSringExceptFromUntilReverseRec(from, until, 1, front,lista);
+		return lista.toString();
 	}
 
-	private String toSringExceptFromUntilReverseRec(int from, int until, int currentIndex, Node<T> current) {
-		if (current == null) {
-			return "";
+	
+	private void toSringExceptFromUntilReverseRec(int from, int until, int currentIndex, Node<T> current,LinkedEDList<T> lista) {
+		if (current==null){
+			return;
 		}
-		
-		if (currentIndex < from && currentIndex >= until) {
-			return current.elem + " " + toSringExceptFromUntilReverseRec(from,until,currentIndex+1,current.next);
+
+		if(currentIndex>=until && currentIndex <= from){
+			toSringExceptFromUntilReverseRec(from, until, currentIndex+1, current.next, lista);
 		}
-		
-		return toSringExceptFromUntilReverseRec(from, until, currentIndex + 1, current.next);
+
+
+		if(currentIndex<until || currentIndex>from){
+			lista.addPos(current.elem, 1);
+			toSringExceptFromUntilReverseRec(from, until, currentIndex+1, current.next,lista);
+		}
+
+		return;
 	}
 
 

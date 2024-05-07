@@ -224,15 +224,34 @@ public class LinkedEDListTest {
 		lista_num.addLast("2");
 		lista_num.addLast("1");
 		lista_num.removeLastElem("2");
-		assertEquals("(1 2 3 4 5 6 2 1 )", lista_num.toString());
+		assertEquals("(1 2 3 4 5 6 2 1 )", lista_num.toString());//aqui tenemos un fallo
 	}
 
 	@Test
 	public void TestAddBeforEmptyList(){
 		lista.addBefore("1", "1");
+		assertEquals("(1 )", lista.toString());
+		lista.addBefore("2", "A");
+		lista.addBefore("2", "A");
+		assertEquals("(2 2 1 )", lista.toString());
+		lista.addBefore("A", "1");
+		assertEquals("(2 2 A 1 )", lista.toString());
 	}
 
-	
+	@Test 
+	public void addBeforeTest_2(){
+		assertFalse(lista_num.addBefore("1", "A"));
+		lista_num.addBefore("1", "A");
+		assertEquals("(1 1 2 3 4 5 6 )", lista_num.toString());
+	}
+
+	@Test
+	public void toStringRaroTest(){
+		assertEquals("(6 2 1 )", lista_num.toSringExceptFromUntilReverse(5, 3));
+		assertEquals("(2 1 )", lista_num.toSringExceptFromUntilReverse(200, 3));
+
+
+	}
 
 
 
