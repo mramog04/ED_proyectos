@@ -223,8 +223,9 @@ public class LinkedEDListTest {
 		assertEquals("(1 2 3 4 5 6 )", lista_num.toString());
 		lista_num.addLast("2");
 		lista_num.addLast("1");
+		assertEquals("(1 2 3 4 5 6 2 1 )", lista_num.toString());
 		lista_num.removeLastElem("2");
-		assertEquals("(1 2 3 4 5 6 2 1 )", lista_num.toString());//aqui tenemos un fallo
+		assertEquals("(1 2 3 4 5 6 1 )", lista_num.toString());
 	}
 
 	@Test
@@ -241,7 +242,6 @@ public class LinkedEDListTest {
 	@Test 
 	public void addBeforeTest_2(){
 		assertFalse(lista_num.addBefore("1", "A"));
-		lista_num.addBefore("1", "A");
 		assertEquals("(1 1 2 3 4 5 6 )", lista_num.toString());
 	}
 
@@ -249,11 +249,50 @@ public class LinkedEDListTest {
 	public void toStringRaroTest(){
 		assertEquals("(6 2 1 )", lista_num.toSringExceptFromUntilReverse(5, 3));
 		assertEquals("(2 1 )", lista_num.toSringExceptFromUntilReverse(200, 3));
+	}
 
+	@Test 
+	public void removeLastElemHastaElFinalTest(){
+		lista.addLast("1");
+		lista.addLast("1");
+		lista.addLast("1");
+		lista.addLast("1");
+		lista.addLast("1");
+		lista.removeLastElem("1");
+		assertEquals("(1 1 1 1 )", lista.toString());
+		lista.removeLastElem("1");
+		assertEquals("(1 1 1 )", lista.toString());
+		lista.removeLastElem("1");
+		assertEquals("(1 1 )", lista.toString());
+		lista.removeLastElem("1");
+		assertEquals("(1 )", lista.toString());
+		lista.removeLastElem("1");
+		assertEquals("()", lista.toString());
+	}
+
+	@Test
+	public void removeLasElemTestUltimaPos(){
+		lista_num.removeLastElem("6");
+		lista_num.addLast("6");
+		lista_num.addLast("7");
+		lista_num.removeLastElem("7");
+		lista_num.addPos("A", 3);
+		lista_num.addPos("A", 5);
+		lista_num.addPos("A", 3200);
+		assertEquals("(1 2 A 3 A 4 5 6 A )", lista_num.toString());
+		lista_num.removeLastElem("A");
+		assertEquals("(1 2 A 3 A 4 5 6 )", lista_num.toString());
+		lista_num.removeLastElem("1");
+		assertEquals("(2 A 3 A 4 5 6 )", lista_num.toString());
 
 	}
 
+	@Test(expected = NoSuchElementException.class)
+	public void removeLastElemExcpTest(){
+		lista.removeLastElem("1");
+	}
 
+	
 
 
 

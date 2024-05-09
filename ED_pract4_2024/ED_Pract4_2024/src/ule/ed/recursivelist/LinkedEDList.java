@@ -107,31 +107,29 @@ public class LinkedEDList<T> implements EDList<T> {
 		}
 		if(this.front.elem.equals(target)){
 			addPos(elem, 1);
+			return true;
 		}
-		for(int i = 0; i<size();i++){
-			//hacer comparaciones aprovechando el getPosElem
+		Node<T> current = this.front;
+		while(current!=null){
+			if(current.elem.equals(target)){
+				return addBeforeRec(front, elem, target, false);
+			}
+			current=current.next;
 		}
-		
-		return addBeforeRec(front, elem, target, false, false);
+		addPos(elem, 1);
+		return false;
 	}
 	//probablemente falle algo relacionado con devolver si es true o false
-	private boolean addBeforeRec(Node<T> current,T elem,T target,boolean found,boolean fin){
-		if(found==false && fin == true){
-			addPos(elem, 1);
-			return false;
-		}else if(found == false && fin == false && current.next!=null){
+	private boolean addBeforeRec(Node<T> current,T elem,T target,boolean fin){
+		if(current.next!=null && fin == false){
 			if(current.next.elem.equals(target)){
 				Node<T> newNode = new Node<T>(elem);
 				newNode.next=current.next;
 				current.next=newNode;
-				found=true;
 				fin=true;
 			}else{
-				addBeforeRec(current.next, elem, target, found, fin);
+				addBeforeRec(current.next, elem, target, fin);
 			}
-		}else if(current.next==null){
-			fin = true;
-			addBeforeRec(current, elem, target, found, fin);
 		}
 		return true;
 	}
@@ -222,41 +220,57 @@ public class LinkedEDList<T> implements EDList<T> {
 	
 
 	@Override
-	public int removeLastElem(T elem) {
+	public int removeLastElem(T elem){
 		// TODO RECURSIVAMENTE
 		elemNull(elem);
-		if (this.front == null) {
-			throw new NoSuchElementException();
+		if (front == null) {
+			throw new NoSuchElementException("Lista vacía");
 		}
-		int[] pos = {0}; 
-		if (removeLastElemRec(front, null, elem, pos)) {
-			return pos[0]+1;
-		} else {
-			throw new NoSuchElementException("La lista no contiene el elemento especificado.");
-		}
+		return removeLastElemRec(null, front, 0, elem);
 	}
 
-	private boolean removeLastElemRec(Node<T> current, Node<T> prev, T elem, int[] pos) {
+	private int removeLastElemRec(Node<T> prev, Node<T> current, int pos, T elem){
 		if (current == null) {
-			return false; 
+			if(this.front!=null&&this.front.next!=null&&getElemPos(size()-1).equals(elem) && !getElemPos(size()).equals(elem)){
+				if (size() == 1) {
+					this.front = null; 
+					return 0;
+				}
+				Node<T> node = this.front;
+				for(int i = 0; i < size() - 3; i++) {
+					node = node.next;
+				}
+				node.next = node.next.next; 
+				return size() - 2;
+			}else if(this.front.elem.equals(elem)){	
+				Node<T> node = this.front.next;	
+				this.front = node;
+				return 1;
+			}else{
+				throw new NoSuchElementException("Elemento no encontrado");
+			}
 		}
-		boolean removed = removeLastElemRec(current.next, current, elem, pos);
-		if (removed) {
-			pos[0]++; 
-		}
+	
+		int result;
 		if (current.elem.equals(elem)) {
 			if (current.next == null) {
-				if (prev != null) {
-					prev.next = null;
+				if (prev == null) {
+					front = null; 
 				} else {
-					front = null;
+					prev.next = null;
 				}
-				return true; 
+				result = pos + 1;
+			} else {
+				result = removeLastElemRec(current, current.next, pos + 1, elem);
 			}
-			return true; 
+		} else {
+			result = removeLastElemRec(current, current.next, pos + 1, elem);
 		}
-		return removed;
+	
+		return result;
 	}
+
+	
 
 	@Override
 	public EDList<T> reverse() {
