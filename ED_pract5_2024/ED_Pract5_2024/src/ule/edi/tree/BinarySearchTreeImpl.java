@@ -60,6 +60,7 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 	BinarySearchTreeImpl<T> father; // referencia a su nodo padre)
 	int count;  // contador de instancias 
 
+	
 	/**
 	 * Devuelve el arbol binario de busqueda izquierdo.
 	 */
@@ -90,20 +91,32 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 	 */
 	public BinarySearchTreeImpl() {
 		// TODO HACER QUE THIS SEA EL NODO VACIO
-	
+		this.left=null;
+		this.right=null;
+		this.father=null;
+		this.count=0;
 	}
 
-	public BinarySearchTreeImpl(BinarySearchTreeImpl<T> father) {
+	public BinarySearchTreeImpl(BinarySearchTreeImpl<T> father,T elem) {
 		// TODO HACER QUE THIS SEA EL NODO VACIO, asignando como padre el parametro
 		// recibido
-	
+		//aqui he añadido lo del elemento ns si esta bien
+		this();
+		this.father= father;
+		this.count=0;
+		this.content=elem;
 	}
 
 	private BinarySearchTreeImpl<T> emptyBST(BinarySearchTreeImpl<T> father) {
 		//Devuelve un nodo vacío
-		return new BinarySearchTreeImpl<T>(father);
+		return new BinarySearchTreeImpl<T>(father,null);//y aqui añadi un null
 	}
 
+	private void elemNull(T elem){
+		if(elem==null){
+			throw new IllegalArgumentException();
+		}
+	}
 	
 	
 	/**
@@ -118,8 +131,15 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 	public int insert(Collection<T> elements) {
 		// si alguno es 'null', no se inserta
 		// TODO Implementar el metodo
-		
-		return 0;
+		int result=0;
+		for(T element : elements){
+			if(element!=null){
+				if(insert(element)){//a lo mejor se puede usar insertRec
+					result++;
+				}
+			}
+		}
+		return result;
 	}
 
 	/**
@@ -132,10 +152,18 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 	 * @return  	numero de elementos insertados en el arbol (elementos diferentes de null)
 	 */
 	public int insert(T... elements) {
-		
 		// si alguno es 'null', no inserta ese elemento
 		// TODO Implementar el metodo
-		return 0;
+		//a lo mejor tambien hay que sumar cuando no lo inserta pero si añade en el count
+		int result=0;
+		for(T element : elements){
+			if(element!=null){
+				if(insert(element)){//a lo mejor se puede usar insertRec
+					result++;
+				}
+			}
+		}
+		return result;
 	}
 
 	/**
@@ -154,9 +182,48 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 	 * @throws IllegalArgumentException si element es null
 	 */
 	public boolean insert(T element) {
-		// TODO Implementar el metodo
-	 return false;
-	}
+        // TODO Implementar el metodo
+        elemNull(element);
+        if(isEmpty()){
+            this.content=element;
+            this.count++;
+        }
+        return insertRec(element,this.father);
+    }
+
+    private boolean insertRec(T elem,BinarySearchTreeImpl<T> current){
+        int cmp = elem.compareTo(current.content);
+        if(cmp < 0){
+            if(current.left.content.equals(elem)){
+				current=current.getLeftBST();
+				current.count++;
+                return false;
+            }else if(current.left.content.equals(null)){
+				current=current.getLeftBST();
+				current = new BinarySearchTreeImpl<T>(current, elem);
+				current.count++;
+                return true;
+            }else{
+                return insertRec(elem,(BinarySearchTreeImpl<T>)current.left);
+            }
+        }else if(cmp > 0){
+            if(current.right.content.equals(elem)){
+				current=current.getRightBST();
+                current.count++;
+                return false;
+            }else if(current.right.content.equals(null)){
+				current=current.getRightBST();
+                current=new BinarySearchTreeImpl<T>(current,elem);
+                current.count++;
+                return true;
+            }else{
+                return insertRec(elem,(BinarySearchTreeImpl<T>)current.right);
+            }
+        }else{
+            current.count++;
+            return false;
+        }
+    }
 
 	/**
 	 * Busca el elemento en el arbol.
@@ -170,7 +237,31 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 	 */
 	public boolean contains(T element) {
 		// TODO Implementar el metodo
-		return false;
+		elemNull(element);
+		return containsRec(element, father);
+	}
+
+	private boolean containsRec(T elem,BinarySearchTreeImpl<T> current){
+		int cmp = elem.compareTo(current.content);
+        if(cmp < 0){
+            if(current.left.content.equals(elem)){
+                return true;
+            }else if(current.left.content.equals(null)){
+                return false;
+            }else{
+                return containsRec(elem,(BinarySearchTreeImpl<T>)current.left);
+            }
+        }else if(cmp > 0){
+            if(current.right.content.equals(elem)){
+                return true;
+            }else if(current.right.content.equals(null)){
+                return false;
+            }else{
+                return containsRec(elem,(BinarySearchTreeImpl<T>)current.right);
+            }
+        }else{
+            return true;
+        }  
 	}
 	
 	/**
