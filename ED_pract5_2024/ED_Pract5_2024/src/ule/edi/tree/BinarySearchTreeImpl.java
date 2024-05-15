@@ -2,8 +2,9 @@ package ule.edi.tree;
 
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
-
+import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -275,14 +276,48 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 	 * 
 	 * @return cadena con el contenido del árbol incluyendo su atributo count entre paréntesis si elemento tiene más de 1 instancia
 	 */
-	public String toString() {
+	public String toString() {//NO ESTA ACABADO
 		// TODO implementar este metodo
 		// CONSEJO: Hay que reciclar la implementación del método de la clase AbstractTreeADT, 
 		// añadiendo el código necesario para poner detrás del content entre paréntesis el count
 		// solo si éste es mayor que 1.
 		// Código que añade el content: result.append("{" + content.toString());
 		
-		return null;
+		if (! isEmpty()) {
+			//	Construye el resultado de forma eficiente
+			StringBuffer result = new StringBuffer();
+				
+			//	Raíz
+			result.append("{" + content.toString());
+
+			if(this.count>1){
+				result.append("("+count+")");
+			}
+			
+			if (! tags.isEmpty()) {
+				result.append(" [");
+				
+				List<String> sk = new LinkedList<String>(tags.keySet());
+				
+				Collections.sort(sk);
+				for (String k : sk) {
+					result.append("(" + k + ", " + tags.get(k) + "), ");
+				}
+				result.delete(result.length() - 2, result.length());
+				result.append("]");
+			}
+			
+			//	Y cada sub-árbol
+			for (int i = 0; i < getMaxDegree(); i++) {
+				result.append(", " + getSubtree(i).toString());
+			}
+			//	Cierra la "}" de este árbol
+			result.append("}");
+			
+			return result.toString();
+		} else {
+			return AbstractTreeADT.EMPTY_TREE_MARK;
+		}
 		
 	}
 
@@ -345,7 +380,19 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 	 */
     public int size() {
 		// TODO implementar este metodo
-		return 0;
+		
+		return sizeRec(father);
+	}
+
+	private int sizeRec(BinarySearchTreeImpl<T> current){
+		if(current.isEmpty()){
+			return 0;
+		}
+		int count = 1;
+		count+=sizeRec(current.getLeftBST());
+		count+=sizeRec(current.getRightBST());
+
+		return count;
 	}
 	
     /**
@@ -361,9 +408,20 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 	 */
 	public int instancesCount() {
 		// TODO implementar este metodo
-		return 0;
+		return instancesCountRec(father);
 	}
 	
+	private int instancesCountRec(BinarySearchTreeImpl<T> current){
+		if(current.isEmpty()){
+			return 0;
+		}
+
+		int count = this.count;
+		count+=instancesCountRec(current.getLeftBST());
+		count+=instancesCountRec(current.getRightBST());
+
+		return count;
+	}
 
 	
 	/**
