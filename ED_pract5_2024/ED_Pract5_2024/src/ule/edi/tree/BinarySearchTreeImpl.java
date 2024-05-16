@@ -1,12 +1,14 @@
 package ule.edi.tree;
 
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Queue;
 
 
 /**
@@ -357,7 +359,7 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 	 *  
 	 * @return iterador para el recorrido en anchura
 	 */
-     public Iterator<T> iteratorWidthInstances() {
+     public Iterator<T> iteratorWidthInstances() {// No se si funciona bien
 		// TODO Implementar metodo
 		// puede implementarse creando una lista con el recorrido en anchura de los
 		// elementos del arbol (teniendo el número de instancias que tiene el elemento)
@@ -378,8 +380,7 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 	 * @return el numero de elementos diferentes del arbol 
 	 */
     public int size() {
-		// TODO implementar este metodo
-		
+		// TODO implementar este metodo		
 		return sizeRec(this);
 	}
 
@@ -461,13 +462,13 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 	private void removeRec(T elem,BinarySearchTreeImpl<T> current){
 		int cmp = elem.compareTo(current.content);
         if(cmp < 0){
-    		if(current.left.content==null){
+    		if(current.left==null){//aqui tmb
                 throw new NoSuchElementException();
             }else{
                 removeRec(elem, current.getLeftBST());
             }
         }else if(cmp > 0){
-            if(current.right.content.equals(null)){
+            if(current.right==null){//aqui antes habia un .content
                 throw new NoSuchElementException();
             }else{
                 removeRec(elem, current.getRightBST());
@@ -504,8 +505,36 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 
 				}
 
-				//Caso 3: El nodo tiene 2 hijos
+				//Caso 3: El nodo tiene 2 hijos(repasar antes del examen)
+				if (current.getLeftBST() != null && current.getRightBST() != null) {
+					// Encuentra el sucesor inmediato del nodo actual
+					BinarySearchTreeImpl<T> successor = current.getRightBST();
+					while (successor.getLeftBST() != null) {
+						successor = successor.getLeftBST();
+					}
+					
+					// Sustituye el valor del nodo actual por el valor del sucesor inmediato
+					current.setContent(successor.getContent());
 				
+					// Elimina el sucesor inmediato
+					if (successor.getRightBST() != null) {
+						// Si el sucesor tiene un hijo derecho, reemplaza al sucesor con su hijo derecho
+						if (successor == successor.father.getLeftBST()) {
+							successor.father.setLeftBST(successor.getRightBST());
+						} else {
+							successor.father.setRightBST(successor.getRightBST());
+						}
+						successor.getRightBST().father = successor.father; // Actualiza el padre del hijo derecho del sucesor
+					} else {
+						// Si el sucesor no tiene hijos derechos, simplemente elimina el sucesor
+						if (successor == successor.father.getLeftBST()) {
+							successor.father.setLeftBST(null);
+						} else {
+							successor.father.setRightBST(null);
+						}
+					}
+					return;
+				}
       		}  
 		}
 	}
@@ -524,13 +553,44 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 	 * @return numero de instancias eliminadas
 	 * 
 	 */
-	public int remove(T element, int num) {
+	public int remove(T element, int num) {// no se si coutInstancesElem() funnciona bien
 		// TODO Implementar el metodo
-		return 0;
-		
+		elemNull(element);
+		int numElements = countInstancesElemRec(element, this);
+		int result = numElements-num;
+		if(result>=0){
+			for(int i = 0;i < num;i++){
+				remove(element);
+			}
+			return num;
+		}
+		else{
+			for(int i = 0;i<numElements;i++){
+				remove(element);
+			}
+			return numElements;
+		}
+
 	}
 
-	
+	private int countInstancesElemRec(T elem,BinarySearchTreeImpl<T> current){
+		int cmp = elem.compareTo(current.content);
+        if(cmp < 0){
+            if(current.left==null){
+                return 0;
+            }else{
+                return countInstancesElemRec(elem,current.getLeftBST());
+            }
+        }else if(cmp > 0){
+			if(current.right==null){
+                return 0;
+            }else{
+                return countInstancesElemRec(elem,current.getRightBST());
+            }
+        }else{
+            return current.count;
+        }
+	}
 	/**
 	 * Elimina todas las instancias del elemento en el árbol 
 	 * eliminando del arbol el nodo que contiene el elemento .
@@ -544,8 +604,12 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 	 */
 	public int removeAll(T element) {
 		// TODO Implementar el metodo
-		return 0;
-		
+		elemNull(element);
+		int numElements = countInstancesElemRec(element, this);
+		for(int i = 0;i<numElements;i++){
+			remove(element);
+		}
+		return numElements;
 	}
 
 	/**

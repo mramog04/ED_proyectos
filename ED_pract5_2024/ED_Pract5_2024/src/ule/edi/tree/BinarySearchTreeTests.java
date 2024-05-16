@@ -146,6 +146,16 @@ public class BinarySearchTreeTests {
 
 		}
 
+		@Test
+		public void removeElem2Test(){
+			ejemplo.insert(20);
+			ejemplo.insert(20);
+			ejemplo.insert(20);
+			assertEquals(ejemplo.toString(), "{10, {5, {2, ∅, ∅}, ∅}, {20(4), {15, ∅, ∅}, {30, ∅, ∅}}}");
+			assertEquals(3, ejemplo.remove(20, 3));
+			assertEquals(ejemplo.toString(), "{10, {5, {2, ∅, ∅}, ∅}, {20, {15, ∅, ∅}, {30, ∅, ∅}}}");
+		}
+
 
 	}
 
