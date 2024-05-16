@@ -1,6 +1,8 @@
 package ule.edi.tree;
 
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -130,6 +132,21 @@ public class BinarySearchTreeTests {
 		public void testRemoveNoSuchElement() {
 			other.remove(11);
 		}
+
+		@Test
+		public void sizeTest(){
+			assertEquals(6, ejemplo.size());
+		}
+
+		@Test 
+		public void instancesCountTest(){
+			assertEquals(6, ejemplo.instancesCount());
+			ejemplo.insert(20);
+			assertEquals(7, ejemplo.instancesCount());
+
+		}
+
+
 	}
 
 

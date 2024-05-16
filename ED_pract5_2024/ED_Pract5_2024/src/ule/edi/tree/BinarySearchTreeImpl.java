@@ -98,19 +98,18 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 		this.count=0;
 	}
 
-	public BinarySearchTreeImpl(BinarySearchTreeImpl<T> father,T elem) {
+	public BinarySearchTreeImpl(BinarySearchTreeImpl<T> father) {
 		// TODO HACER QUE THIS SEA EL NODO VACIO, asignando como padre el parametro
 		// recibido
 		//aqui he añadido lo del elemento ns si esta bien
 		this();
 		this.father= father;
 		this.count=0;
-		this.content=elem;
 	}
 
 	private BinarySearchTreeImpl<T> emptyBST(BinarySearchTreeImpl<T> father) {
 		//Devuelve un nodo vacío
-		return new BinarySearchTreeImpl<T>(father,null);//y aqui añadi un null
+		return new BinarySearchTreeImpl<T>(father);//y aqui añadi un null
 	}
 
 	private void elemNull(T elem){
@@ -186,39 +185,39 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
         // TODO Implementar el metodo
         elemNull(element);
         if(isEmpty()){
-            this.content=element;
+            this.setContent(element);
+			this.setLeftBST(emptyBST(father));
+			this.setRightBST(emptyBST(father));
             this.count++;
+			return true;
         }
-        return insertRec(element,this.father);
+        return insertRec(element,this);
     }
 
     private boolean insertRec(T elem,BinarySearchTreeImpl<T> current){
         int cmp = elem.compareTo(current.content);
+
         if(cmp < 0){
-            if(current.left.content.equals(elem)){
+            if(current.left.content==null){
 				current=current.getLeftBST();
+				current.setContent(elem);
 				current.count++;
-                return false;
-            }else if(current.left.content.equals(null)){
-				current=current.getLeftBST();
-				current = new BinarySearchTreeImpl<T>(current, elem);
-				current.count++;
+				current.setLeftBST(emptyBST(current));
+				current.setRightBST(emptyBST(current));
                 return true;
             }else{
-                return insertRec(elem,(BinarySearchTreeImpl<T>)current.left);
+                return insertRec(elem,current.getLeftBST());
             }
         }else if(cmp > 0){
-            if(current.right.content.equals(elem)){
+            if(current.right.content==null){
 				current=current.getRightBST();
+				current.setContent(elem);
                 current.count++;
-                return false;
-            }else if(current.right.content.equals(null)){
-				current=current.getRightBST();
-                current=new BinarySearchTreeImpl<T>(current,elem);
-                current.count++;
+				current.setLeftBST(emptyBST(current));
+				current.setRightBST(emptyBST(current));
                 return true;
             }else{
-                return insertRec(elem,(BinarySearchTreeImpl<T>)current.right);
+                return insertRec(elem,current.getRightBST());
             }
         }else{
             current.count++;
@@ -381,7 +380,7 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
     public int size() {
 		// TODO implementar este metodo
 		
-		return sizeRec(father);
+		return sizeRec(this);
 	}
 
 	private int sizeRec(BinarySearchTreeImpl<T> current){
@@ -408,7 +407,7 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 	 */
 	public int instancesCount() {
 		// TODO implementar este metodo
-		return instancesCountRec(father);
+		return instancesCountRec(this);
 	}
 	
 	private int instancesCountRec(BinarySearchTreeImpl<T> current){
@@ -416,7 +415,7 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 			return 0;
 		}
 
-		int count = this.count;
+		int count = current.count;
 		count+=instancesCountRec(current.getLeftBST());
 		count+=instancesCountRec(current.getRightBST());
 
@@ -433,7 +432,14 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 	 */
 	public int  remove(T... elements) {
 		// TODO Implementar el metodo
-		return 0;
+		int result = 0;
+		for(T element : elements){
+			if(element!=null){
+				remove(element);
+				result++;
+			}
+		}
+		return result;
 	}
 
 	/**
@@ -447,9 +453,61 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
      *
 	 */
 	public void remove(T element) {
-		
 		// TODO Implementar el metodo
-		
+		elemNull(element);
+		removeRec(element, this);
+	}
+
+	private void removeRec(T elem,BinarySearchTreeImpl<T> current){
+		int cmp = elem.compareTo(current.content);
+        if(cmp < 0){
+    		if(current.left.content==null){
+                throw new NoSuchElementException();
+            }else{
+                removeRec(elem, current.getLeftBST());
+            }
+        }else if(cmp > 0){
+            if(current.right.content.equals(null)){
+                throw new NoSuchElementException();
+            }else{
+                removeRec(elem, current.getRightBST());
+            }
+        }else{
+            if(current.count > 1){
+				current.count--;
+				return;
+			}else{
+				//Caso 1: El nodo no tiene hijos
+				if (current.getLeftBST() == null && current.getRightBST() == null) {
+					// Verifica si el nodo es el hijo izquierdo o derecho de su padre y lo elimina
+					if (current == current.father.getLeftBST()) {
+						current.father.setLeftBST(null);
+					} else {
+						current.father.setRightBST(null);
+					}
+					return;
+				}
+			
+				// Caso 2: El nodo tiene un solo hijo
+				if (current.getLeftBST() == null || current.getRightBST() == null) {
+					// Encuentra el hijo del nodo
+					BinarySearchTreeImpl<T> child = (current.getLeftBST() != null) ? current.getLeftBST() : current.getRightBST();
+			
+					// Reemplaza el nodo actual por su hijo
+					if (current == current.father.getLeftBST()) {
+						current.father.setLeftBST(child);
+					} else {
+						current.father.setRightBST(child);
+					}
+					child.father=current.father; // Actualiza el padre del hijo
+					return;	
+
+				}
+
+				//Caso 3: El nodo tiene 2 hijos
+				
+      		}  
+		}
 	}
 	
 	/**
