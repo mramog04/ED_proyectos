@@ -284,7 +284,7 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 		// solo si éste es mayor que 1.
 		// Código que añade el content: result.append("{" + content.toString());
 		
-		if (! isEmpty()) {
+		if (!isEmpty()) {
 			//	Construye el resultado de forma eficiente
 			StringBuffer result = new StringBuffer();
 				
@@ -295,7 +295,7 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 				result.append("("+count+")");
 			}
 			
-			if (! tags.isEmpty()) {
+			if (!tags.isEmpty()) {
 				result.append(" [");
 				
 				List<String> sk = new LinkedList<String>(tags.keySet());
@@ -344,7 +344,27 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 	 	// TODO Implementar metodo
 		// puede implementarse creando una lista con el recorrido en anchura de los
 		// elementos del arbol y devolver el iterador de dicha lista
-		return null;
+		List<T> resultList = new ArrayList<>();
+		if (!isEmpty()) {
+			Queue<BinarySearchTreeImpl<T>> queue = new LinkedList<>();
+			queue.add(this);
+
+			while (!queue.isEmpty()) {
+				BinarySearchTreeImpl<T> current = queue.poll();
+
+				if (current.content != null) {
+					resultList.add(current.content);
+				}
+
+				if (current.getLeftBST() != null) {
+					queue.add(current.getLeftBST());
+				}
+				if (current.getRightBST() != null) {
+					queue.add(current.getRightBST());
+				}
+			}
+		}
+		return resultList.iterator();
 	}
 
 	/**
@@ -364,7 +384,28 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 		// puede implementarse creando una lista con el recorrido en anchura de los
 		// elementos del arbol (teniendo el número de instancias que tiene el elemento)
 		//y devolver el iterador de dicha lista
-		return null;
+		List<T> resultList = new ArrayList<>();
+		if (!isEmpty()) {
+			Queue<BinarySearchTreeImpl<T>> queue = new LinkedList<>();
+			queue.add(this);
+
+			while (!queue.isEmpty()) {
+				BinarySearchTreeImpl<T> current = queue.poll();
+
+				// Add current.content count times
+				for (int i = 0; i < current.count; i++) {
+					resultList.add(current.content);
+				}
+
+				if (current.getLeftBST() != null) {
+					queue.add(current.getLeftBST());
+				}
+				if (current.getRightBST() != null) {
+					queue.add(current.getRightBST());
+				}
+			}
+		}
+		return resultList.iterator();
 	 }
 	
 		
@@ -456,6 +497,9 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 	public void remove(T element) {
 		// TODO Implementar el metodo
 		elemNull(element);
+		if(this.isEmpty()){
+			throw new NoSuchElementException();
+		}
 		removeRec(element, this);
 	}
 
@@ -515,6 +559,7 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 					
 					// Sustituye el valor del nodo actual por el valor del sucesor inmediato
 					current.setContent(successor.getContent());
+					current.count = successor.count;
 				
 					// Elimina el sucesor inmediato
 					if (successor.getRightBST() != null) {
@@ -630,8 +675,27 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 	* @throws IllegalArgumentException si el camino no contiene sólamente 0s y 1s
 */
 	public BinarySearchTreeImpl<T> getSubtreeWithPath(String path) {
-		return father;
 	//TODO
+	if (path == null) {
+        throw new IllegalArgumentException("Path cannot be null");
+    }
+
+    BinarySearchTreeImpl<T> current = this;
+    for (char direction : path.toCharArray()) {
+        if (direction == '0') {
+            current = current.getLeftBST();
+        } else if (direction == '1') {
+            current = current.getRightBST();
+        } else {
+            throw new IllegalArgumentException("Path contains invalid characters");
+        }
+
+        if (current == null) {
+            throw new NoSuchElementException("Subtree does not exist");
+        }
+    }
+
+    return current;
 	}
 
 
