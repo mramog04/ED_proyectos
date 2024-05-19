@@ -674,7 +674,7 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 	* @throws NoSuchElementException si el camino no alcanza un nodo no vacío en el árbol
 	* @throws IllegalArgumentException si el camino no contiene sólamente 0s y 1s
 */
-	public BinarySearchTreeImpl<T> getSubtreeWithPath(String path) {
+	public BinarySearchTreeImpl<T> getSubtreeWithPath(String path) {//repasar si fuciona bien
 	//TODO
 	if (path == null) {
         throw new IllegalArgumentException("Path cannot be null");
@@ -727,7 +727,26 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 */
 	public T getContentWithPath(String path) {
 	//TODO
-	 return null;
+	if (path == null) {
+        throw new IllegalArgumentException("Path cannot be null");
+    }
+
+    BinarySearchTreeImpl<T> current = this;
+    for (char direction : path.toCharArray()) {
+        if (direction == '0') {
+            current = current.getLeftBST();
+        } else if (direction == '1') {
+            current = current.getRightBST();
+        } else {
+            throw new IllegalArgumentException("Path contains invalid characters");
+        }
+
+        if (current == null) {
+            throw new NoSuchElementException("Subtree does not exist");
+        }
+    }
+
+    return current.getContent();
 	}
 
 
@@ -756,9 +775,26 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 	*       {20 [(descend, 2)], ∅, {30 [(descend, 1)], ∅, ∅}}}
 	* 
    */
-	public void tagDescendent() {
+	public void tagDescendent() {//no se si funcionara bien
 		// TODO
-		
+		BinarySearchTreeImpl<T> current = this;
+		int instances = this.instancesCount();
+
+		tagDescendenRec(current, instances);		
+	}
+
+	private void tagDescendenRec(TreeADT<T> current,int degree){
+		if (current.isEmpty()) {
+			return;
+		}
+	
+		current.setTag("descend", degree--);
+	
+		// Recursivamente etiqueta cada sub-árbol
+		for (int i = 0; i < current.getMaxDegree(); i++) {
+			tagDescendenRec(current.getSubtree(i), degree);
+		}
+		return;
 	}
 
 
@@ -791,12 +827,14 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 	 *       {5 [(preorder, 2)], {2 [(preorder, 3)], ∅, ∅}, ∅}, 
 	 *       {20 [(preorder, 4)], ∅, {30 [(preorder, 5)], ∅, ∅}}}
 	 * 
-	 * @retur lista con el resultado.
+	 * @return lista con el resultado.
 	 */
 	public List<String> parentChildPairsTagPreorder() {
 	//TODO
 		return null;
 	}
+
+	
 
 
 	/**
