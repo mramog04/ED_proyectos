@@ -185,7 +185,7 @@ public class BinarySearchTreeTests {
 			Assert.assertEquals("{10, {5, ∅, ∅}, {20, {12, ∅, ∅}, ∅}}", tree.toString());
 		}
 
-		@Test
+		@Test//ReHacer estos test si hay tiempo en elgun momento
 		public void testIteratorWidth() {
 			BinarySearchTreeImpl<Integer> tree = new BinarySearchTreeImpl<>();
 			tree.insert(50);
@@ -229,6 +229,8 @@ public class BinarySearchTreeTests {
 
 			Assert.assertEquals(expected, actual);
 		}
+
+		
 		
 
 	}

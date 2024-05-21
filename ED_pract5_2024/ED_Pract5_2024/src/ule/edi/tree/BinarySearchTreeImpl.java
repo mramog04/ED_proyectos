@@ -506,13 +506,13 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 	private void removeRec(T elem,BinarySearchTreeImpl<T> current){
 		int cmp = elem.compareTo(current.content);
         if(cmp < 0){
-    		if(current.left==null){//aqui tmb
+    		if(current.getLeftBST().isEmpty()){
                 throw new NoSuchElementException();
             }else{
                 removeRec(elem, current.getLeftBST());
             }
         }else if(cmp > 0){
-            if(current.right==null){//aqui antes habia un .content
+            if(current.getRightBST().isEmpty()){
                 throw new NoSuchElementException();
             }else{
                 removeRec(elem, current.getRightBST());
@@ -523,66 +523,66 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 				return;
 			}else{
 				//Caso 1: El nodo no tiene hijos
-				if (current.getLeftBST() == null && current.getRightBST() == null) {
+				if (isLeaf()) {
 					// Verifica si el nodo es el hijo izquierdo o derecho de su padre y lo elimina
-					if (current == current.father.getLeftBST()) {
-						current.father.setLeftBST(null);
-					} else {
-						current.father.setRightBST(null);
-					}
+					current.setContent(null);
+					current.count=0;
+					current.setRightBST(null);
+					current.setLeftBST(null);
 					return;
 				}
 			
-				// Caso 2: El nodo tiene un solo hijo
-				if (current.getLeftBST() == null || current.getRightBST() == null) {
+				// Caso 2.1: El nodo tiene un solo hijo y es izquierdo
+				if (!current.getLeftBST().isEmpty() && current.getRightBST().isEmpty()) {
 					// Encuentra el hijo del nodo
-					BinarySearchTreeImpl<T> child = (current.getLeftBST() != null) ? current.getLeftBST() : current.getRightBST();
+					BinarySearchTreeImpl<T> child = current.getLeftBST();
 			
 					// Reemplaza el nodo actual por su hijo
-					if (current == current.father.getLeftBST()) {
-						current.father.setLeftBST(child);
-					} else {
-						current.father.setRightBST(child);
-					}
+					current.setContent(child.content);
+					current.count=child.count;
+					current.setRightBST(child.getRightBST());
+					current.setLeftBST(child.getLeftBST());
+					child.father=current.father; // Actualiza el padre del hijo
+					return;	
+
+				}
+
+				// Caso 2.2: El nodo tiene un solo hijo y es derecho
+				if (current.getLeftBST().isEmpty() && !current.getRightBST().isEmpty()) {
+					// Encuentra el hijo del nodo
+					BinarySearchTreeImpl<T> child = current.getRightBST();
+
+					current.setContent(child.content);
+					current.count=child.count;
+					current.setRightBST(child.getRightBST());
+					current.setLeftBST(child.getLeftBST());
 					child.father=current.father; // Actualiza el padre del hijo
 					return;	
 
 				}
 
 				//Caso 3: El nodo tiene 2 hijos(repasar antes del examen)
-				if (current.getLeftBST() != null && current.getRightBST() != null) {
+				if (!current.getLeftBST().isEmpty() && !current.getRightBST().isEmpty()) {
 					// Encuentra el sucesor inmediato del nodo actual
-					BinarySearchTreeImpl<T> successor = current.getRightBST();
-					while (successor.getLeftBST() != null) {
-						successor = successor.getLeftBST();
-					}
+					BinarySearchTreeImpl<T> sucessor = current.getMin(current.getRightBST());
 					
 					// Sustituye el valor del nodo actual por el valor del sucesor inmediato
-					current.setContent(successor.getContent());
-					current.count = successor.count;
+					current.setContent(sucessor.getContent());
+					current.count = sucessor.count;
 				
-					// Elimina el sucesor inmediato
-					if (successor.getRightBST() != null) {
-						// Si el sucesor tiene un hijo derecho, reemplaza al sucesor con su hijo derecho
-						if (successor == successor.father.getLeftBST()) {
-							successor.father.setLeftBST(successor.getRightBST());
-						} else {
-							successor.father.setRightBST(successor.getRightBST());
-						}
-						successor.getRightBST().father = successor.father; // Actualiza el padre del hijo derecho del sucesor
-					} else {
-						// Si el sucesor no tiene hijos derechos, simplemente elimina el sucesor
-						if (successor == successor.father.getLeftBST()) {
-							successor.father.setLeftBST(null);
-						} else {
-							successor.father.setRightBST(null);
-						}
-					}
+					current.getRightBST().remove(sucessor.content,sucessor.count);
 					return;
 				}
       		}  
 		}
 	}
+
+	private BinarySearchTreeImpl<T> getMin(BinarySearchTreeImpl<T> current){
+		if(current.getLeftBST()!=null){
+			current.getMin(current.getLeftBST());
+		}
+		return current;
+	} 
 	
 	/**
 	 * Decrementa el número de instancias del elemento en num unidades.
@@ -829,12 +829,31 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 	 * 
 	 * @return lista con el resultado.
 	 */
-	public List<String> parentChildPairsTagPreorder() {
+	public List<String> parentChildPairsTagPreorder() {//comprobar si funciona bien
 	//TODO
-		return null;
+		List<String> pairs = new ArrayList<>();
+        int[] preorderIndex = {1}; // To keep track of the preorder position
+        parentChildPairsTagPreorderRec(this, pairs, preorderIndex, null);
+        return pairs;
 	}
 
-	
+	private void parentChildPairsTagPreorderRec(BinarySearchTreeImpl<T> node, List<String> pairs, int[] preorderIndex, T parent) {
+        if (node == null || node.isEmpty()) {
+            return;
+        }
+
+        // Tag the current node with its preorder position
+        node.setTag("preorder", preorderIndex[0]++);
+
+        // If the parent is not null, add the pair (parent, current node)
+        if (parent != null) {
+            pairs.add("(" + parent + "," + node.getContent() + ")");
+        }
+
+        // Recursively process the left and right subtrees
+        parentChildPairsTagPreorderRec(node.getLeftBST(), pairs, preorderIndex, node.getContent());
+        parentChildPairsTagPreorderRec(node.getRightBST(), pairs, preorderIndex, node.getContent());
+    }
 
 
 	/**
