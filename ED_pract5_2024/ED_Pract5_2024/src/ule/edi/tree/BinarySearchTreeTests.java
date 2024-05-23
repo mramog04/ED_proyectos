@@ -54,6 +54,7 @@ public class BinarySearchTreeTests {
 	* |  | 	 ∅
   */
 	private BinarySearchTreeImpl<Integer> other=null;
+
 	
 	@Before
 	public void setupBSTs() {
@@ -109,6 +110,7 @@ public class BinarySearchTreeTests {
 		ejemplo.remove(10);
 		Assert.assertEquals("{15, {5, {2, ∅, ∅}, ∅}, {20, ∅, {30, ∅, ∅}}}",ejemplo.toString());
 	}
+
 	
 			
 				

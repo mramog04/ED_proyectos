@@ -116,7 +116,7 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 
 	private void elemNull(T elem){
 		if(elem==null){
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("ElemNUll exception");
 		}
 	}
 	
@@ -523,8 +523,7 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 				return;
 			}else{
 				//Caso 1: El nodo no tiene hijos
-				if (isLeaf()) {
-					// Verifica si el nodo es el hijo izquierdo o derecho de su padre y lo elimina
+				if (current.isLeaf()) {
 					current.setContent(null);
 					current.count=0;
 					current.setRightBST(null);
@@ -542,9 +541,9 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 					current.count=child.count;
 					current.setRightBST(child.getRightBST());
 					current.setLeftBST(child.getLeftBST());
-					child.father=current.father; // Actualiza el padre del hijo
+					child.getRightBST().father=current;
+					child.getLeftBST().father=current; 
 					return;	
-
 				}
 
 				// Caso 2.2: El nodo tiene un solo hijo y es derecho
@@ -556,7 +555,8 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 					current.count=child.count;
 					current.setRightBST(child.getRightBST());
 					current.setLeftBST(child.getLeftBST());
-					child.father=current.father; // Actualiza el padre del hijo
+					child.getRightBST().father=current;
+					child.getLeftBST().father=current; 
 					return;	
 
 				}
@@ -578,10 +578,10 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 	}
 
 	private BinarySearchTreeImpl<T> getMin(BinarySearchTreeImpl<T> current){
-		if(current.getLeftBST()!=null){
-			current.getMin(current.getLeftBST());
+		if(current.isLeaf() ||  current.getLeftBST().isEmpty()){
+			return current;
 		}
-		return current;
+		return current.getMin(current.getLeftBST());
 	} 
 	
 	/**
@@ -790,7 +790,6 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 	
 		current.setTag("descend", degree--);
 	
-		// Recursivamente etiqueta cada sub-árbol
 		for (int i = 0; i < current.getMaxDegree(); i++) {
 			tagDescendenRec(current.getSubtree(i), degree);
 		}
@@ -842,15 +841,12 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
             return;
         }
 
-        // Tag the current node with its preorder position
         node.setTag("preorder", preorderIndex[0]++);
 
-        // If the parent is not null, add the pair (parent, current node)
         if (parent != null) {
             pairs.add("(" + parent + "," + node.getContent() + ")");
         }
 
-        // Recursively process the left and right subtrees
         parentChildPairsTagPreorderRec(node.getLeftBST(), pairs, preorderIndex, node.getContent());
         parentChildPairsTagPreorderRec(node.getRightBST(), pairs, preorderIndex, node.getContent());
     }
