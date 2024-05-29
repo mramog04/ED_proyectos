@@ -929,13 +929,20 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 			return false;
 		}
 
+
 		if(this.father.getLeftBST()==this){
+			if(this.father.getRightBST().isEmpty()){
+				return false;
+			}
 			if(this.count==this.father.getRightBST().count){
 				return true;
 			}{
 				return false;
 			}
 		}else{
+			if(this.father.getLeftBST().isEmpty()){
+				return false;
+			}
 			if(this.count==this.father.getLeftBST().count){
 				return true;
 			}else{
