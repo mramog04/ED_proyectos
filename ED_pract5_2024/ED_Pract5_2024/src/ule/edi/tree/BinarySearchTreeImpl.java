@@ -883,11 +883,28 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 	 * 
 	 * @return numero de nodos hijos izquierdos
 	 */
-	public int tagLeftChildrenPostorder() {
+	public int tagLeftChildrenPostorder() {//revisar si funciona bien
 		//TODO
-		return 0;
+		return tagLeftChildrenPostorderRec(father, father, new int[]{0}, new int[]{0});
 	}
 
+	private int tagLeftChildrenPostorderRec(BinarySearchTreeImpl<T> current,BinarySearchTreeImpl<T> root,int[] postorden,int[] leftChildCount){
+		if(current==null || current.isEmpty()){
+			return leftChildCount[0];
+		}
+
+		tagLeftChildrenPostorderRec(current.getLeftBST(), root, postorden,leftChildCount);
+		tagLeftChildrenPostorderRec(current.getRightBST().getLeftBST(), root, postorden,leftChildCount);
+
+		postorden[0]++;
+
+		if(!current.father.isEmpty() && current == current.father.getLeftBST()){
+			current.setTag("Postoden", postorden[0]);
+			leftChildCount[0]++;
+		}
+
+		return leftChildCount[0];
+	}
 
 	/**
 	* Comprueba si el nodo actual (this) tiene un hermano 
@@ -908,7 +925,23 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 	*/
 	public boolean hasBrotherSameCount() {
 		//TODO
-		return false;
+		if(this.father==null){
+			return false;
+		}
+
+		if(this.father.getLeftBST()==this){
+			if(this.count==this.father.getRightBST().count){
+				return true;
+			}{
+				return false;
+			}
+		}else{
+			if(this.count==this.father.getLeftBST().count){
+				return true;
+			}else{
+				return false;
+			}
+		}
 	}
 	
 	/**
