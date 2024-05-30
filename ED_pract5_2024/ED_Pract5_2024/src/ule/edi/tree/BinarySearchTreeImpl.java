@@ -788,11 +788,12 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 			return;
 		}
 	
-		current.setTag("descend", degree--);
 	
 		for (int i = 0; i < current.getMaxDegree(); i++) {
 			tagDescendenRec(current.getSubtree(i), degree);
 		}
+
+		current.setTag("descend", degree--);
 		return;
 	}
 
