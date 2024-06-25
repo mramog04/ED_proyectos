@@ -1,6 +1,7 @@
 package ule.edi.tree;
 
 
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -188,8 +189,8 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
         elemNull(element);
         if(isEmpty()){
             this.setContent(element);
-			this.setLeftBST(emptyBST(father));
-			this.setRightBST(emptyBST(father));
+			this.setLeftBST(emptyBST(this));
+			this.setRightBST(emptyBST(this));
             this.count++;
 			return true;
         }
@@ -240,26 +241,22 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 	public boolean contains(T element) {
 		// TODO Implementar el metodo
 		elemNull(element);
-		return containsRec(element, father);
+		return containsRec(element, this);
 	}
 
 	private boolean containsRec(T elem,BinarySearchTreeImpl<T> current){
 		int cmp = elem.compareTo(current.content);
         if(cmp < 0){
-            if(current.left.content.equals(elem)){
-                return true;
-            }else if(current.left.content.equals(null)){
+            if(current.getLeftBST().content==null){
                 return false;
             }else{
-                return containsRec(elem,(BinarySearchTreeImpl<T>)current.left);
+                return containsRec(elem,current.getLeftBST());
             }
         }else if(cmp > 0){
-            if(current.right.content.equals(elem)){
-                return true;
-            }else if(current.right.content.equals(null)){
+            if(current.getRightBST().content == null){
                 return false;
             }else{
-                return containsRec(elem,(BinarySearchTreeImpl<T>)current.right);
+                return containsRec(elem,current.getRightBST());
             }
         }else{
             return true;
@@ -504,19 +501,14 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 	}
 
 	private void removeRec(T elem,BinarySearchTreeImpl<T> current){
+		if(current.isEmpty()){
+			throw new NoSuchElementException();
+		}
 		int cmp = elem.compareTo(current.content);
         if(cmp < 0){
-    		if(current.getLeftBST().isEmpty()){
-                throw new NoSuchElementException();
-            }else{
-                removeRec(elem, current.getLeftBST());
-            }
+            removeRec(elem, current.getLeftBST());
         }else if(cmp > 0){
-            if(current.getRightBST().isEmpty()){
-                throw new NoSuchElementException();
-            }else{
-                removeRec(elem, current.getRightBST());
-            }
+            removeRec(elem, current.getRightBST());
         }else{
             if(current.count > 1){
 				current.count--;
@@ -570,7 +562,7 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 					current.setContent(sucessor.getContent());
 					current.count = sucessor.count;
 				
-					current.getRightBST().remove(sucessor.content,sucessor.count);
+					current.getRightBST().removeAll(sucessor.content);
 					return;
 				}
       		}  
@@ -581,7 +573,7 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 		if(current.isLeaf() ||  current.getLeftBST().isEmpty()){
 			return current;
 		}
-		return current.getMin(current.getLeftBST());
+		return getMin(current.getLeftBST());
 	} 
 	
 	/**
@@ -602,8 +594,11 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 		// TODO Implementar el metodo
 		elemNull(element);
 		int numElements = countInstancesElemRec(element, this);
+		if (numElements == 0) {
+        throw new NoSuchElementException("Element not found in the tree");
+   		}
 		int result = numElements-num;
-		if(result>=0){
+		if(result>0){
 			for(int i = 0;i < num;i++){
 				remove(element);
 			}
@@ -619,19 +614,14 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 	}
 
 	private int countInstancesElemRec(T elem,BinarySearchTreeImpl<T> current){
+		if(current.isEmpty()){
+			throw new NoSuchElementException();
+		}
 		int cmp = elem.compareTo(current.content);
         if(cmp < 0){
-            if(current.left==null){
-                return 0;
-            }else{
-                return countInstancesElemRec(elem,current.getLeftBST());
-            }
+            return countInstancesElemRec(elem,current.getLeftBST());
         }else if(cmp > 0){
-			if(current.right==null){
-                return 0;
-            }else{
-                return countInstancesElemRec(elem,current.getRightBST());
-            }
+            return countInstancesElemRec(elem,current.getRightBST());
         }else{
             return current.count;
         }
@@ -651,9 +641,7 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 		// TODO Implementar el metodo
 		elemNull(element);
 		int numElements = countInstancesElemRec(element, this);
-		for(int i = 0;i<numElements;i++){
-			remove(element);
-		}
+		remove(element,numElements);
 		return numElements;
 	}
 
@@ -787,7 +775,7 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 		if (current.isEmpty()) {
 			return;
 		}
-	
+		//current.setTag("descend", degree--); ante estaba aqui puesto.
 	
 		for (int i = 0; i < current.getMaxDegree(); i++) {
 			tagDescendenRec(current.getSubtree(i), degree);
@@ -886,7 +874,7 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 	 */
 	public int tagLeftChildrenPostorder() {//revisar si funciona bien
 		//TODO
-		return tagLeftChildrenPostorderRec(father, father, new int[]{0}, new int[]{0});
+		return tagLeftChildrenPostorderRec(this, this, new int[]{0}, new int[]{0});
 	}
 
 	private int tagLeftChildrenPostorderRec(BinarySearchTreeImpl<T> current,BinarySearchTreeImpl<T> root,int[] postorden,int[] leftChildCount){
@@ -899,7 +887,8 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 
 		postorden[0]++;
 
-		if(!current.father.isEmpty() && current == current.father.getLeftBST()){
+
+		if(current.father!=null && current == current.father.getLeftBST()){
 			current.setTag("Postoden", postorden[0]);
 			leftChildCount[0]++;
 		}
@@ -971,10 +960,54 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 	*    
 	*/
 	public String toStringSimetric() {
-		//TODO
-		return null;
-	}
+		if (this.father == null) {
+			return "";
+		}
 	
+		BinarySearchTreeImpl<T> sibling;
+		if (this == this.father.left) {
+			sibling = this.father.getRightBST();
+		} else {
+			sibling = this.father.getLeftBST();
+		}
+	
+		if (sibling == null || sibling.isEmpty()) {
+			return "";
+		}
+	
+		return symmetricTreeToString(findSymmetricNode(this, sibling));
+	}
+
+	private String symmetricTreeToString(BinarySearchTreeImpl<T> node) {
+		if (node == null || node.isEmpty()) {
+			return "";
+		}
+		return "{" + node.content.toString() + ", " + symmetricTreeToString(node.getLeftBST()) + ", " + symmetricTreeToString(node.getRightBST()) + "}";
+	}
+
+	
+	private BinarySearchTreeImpl<T> findSymmetricNode(BinarySearchTreeImpl<T> target, BinarySearchTreeImpl<T> sibling) {
+		if (sibling.isEmpty() || sibling==null) {
+			return new BinarySearchTreeImpl<>(null);
+		}
+
+		boolean isLeftChild = target == target.father.getLeftBST();
+	
+		if (target.isLeaf()) {
+			if (isLeftChild) {
+				return sibling.getRightBST();
+			} else {
+				return sibling.getLeftBST();
+			}
+		}
+	
+		if (isLeftChild) {
+			return findSymmetricNode(target.getLeftBST(), sibling.getLeftBST());
+		} else {
+			return findSymmetricNode(target.getRightBST(), sibling.getRightBST());
+		}
+	}
+
 	/**
 	 * Busca y devuelve a partir del nodo que contiene el elemento pasado como parámetro 
 	 * el elemento que está up posiciones hacia arriba y right hacia abajo bajando por la rama derecha. 
@@ -995,10 +1028,56 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 	 * @throws IllegalArgumentException si element es null
 	 */
 	public T getRoadUpRight(T elem, int up, int right) {
-		//TODO
-	return null;
+		if (elem == null) {
+			throw new IllegalArgumentException("Element cannot be null");
+		}
+	
+		BinarySearchTreeImpl<T> startNode = findNode(this, elem);
+		if (startNode == null) {
+			throw new NoSuchElementException("Element not found in the tree");
+		}
+	
+		startNode.addTag("road", 1);
+	
+		BinarySearchTreeImpl<T> currentNode = startNode;
+		for (int i = 1; i <= up; i++) {
+			if (currentNode.father == null) {
+				throw new NoSuchElementException();
+			}
+			currentNode = currentNode.father;
+			currentNode.addTag("road", i + 1);
+		}
+	
+		for (int i = 1; i <= right; i++) {
+			if (currentNode.right == null || currentNode.right.isEmpty()) {
+				throw new NoSuchElementException();
+			}
+			currentNode = currentNode.getRightBST();
+			currentNode.addTag("road", up + i + 1);
+		}
+	
+		return currentNode.content;
 	}	
 	
+	private BinarySearchTreeImpl<T> findNode(BinarySearchTreeImpl<T> node, T elem) {
+		if (node.isEmpty()) {
+			return null;
+		}
+	
+		int cmp = elem.compareTo(node.content);
+		if (cmp < 0) {
+			return findNode(node.getLeftBST(), elem);
+		} else if (cmp > 0) {
+			return findNode(node.getRightBST(), elem);
+		} else {
+			return node;
+		}
+	}
+	
+	private void addTag(String tag, int value) {
+		this.tags.put(tag, value);
+	}
+
 	/**
 	 * Importante: Solamente se puede recorrer el arbol una vez
 	 * 
@@ -1023,9 +1102,34 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 	 * 
 	 */
 	public int tagOnlySonPreorder() {
-    //TODO
-	return 0;
+ 
+    int[] preOrderPosition = {0};
+    int[] onlySonCount = {0};
+
+    tagOnlySonPreorderRec(this, preOrderPosition, onlySonCount);
+
+    return onlySonCount[0]+1;
 	}
+
+	private void tagOnlySonPreorderRec(BinarySearchTreeImpl<T> node, int[] preOrderPosition, int[] onlySonCount) {
+		if (node == null || node.isEmpty()) {
+			return;
+		}
+	
+		preOrderPosition[0]++;
+	
+		if (node.father != null) {
+			if ((node.father.getLeftBST() == node && (node.father.getRightBST().isEmpty() || node.father.getRightBST()== null)) ||
+				(node.father.getRightBST() == node && (node.father.getLeftBST().isEmpty() || node.father.getLeftBST()==null))) {
+				onlySonCount[0]++;
+				node.addTag("onlySon", preOrderPosition[0]);
+			}
+		}
+	
+		tagOnlySonPreorderRec(node.getLeftBST(), preOrderPosition, onlySonCount);
+		tagOnlySonPreorderRec(node.getRightBST(), preOrderPosition, onlySonCount);
+	}
+	
 		
 }
 	
