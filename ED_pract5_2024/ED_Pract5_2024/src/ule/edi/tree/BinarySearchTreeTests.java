@@ -254,6 +254,26 @@ public class BinarySearchTreeTests {
 			assertEquals("∅", tree.getSubtreeWithPath("00").toStringSimetric());
 		}
 		
+		@Test
+		public void testToStringSimetric_2() {
+			BinarySearchTreeImpl<Integer> tree = new BinarySearchTreeImpl<>();
+			tree.insert(10);
+			tree.insert(5);
+			tree.insert(2);
+			tree.insert(20);
+			tree.insert(30);
+		
+			// Raíz del árbol, no tiene nodo simétrico
+			assertEquals("", tree.toStringSimetric());
+		
+			// Nodo 10, su nodo simétrico es el nodo 20
+			assertEquals("{20, ∅, {30, ∅, ∅}}", tree.getSubtreeWithPath("0").toStringSimetric());
+		
+			// Nodo 5, su nodo simétrico es el nodo 30
+			assertEquals("{30, ∅, ∅}", tree.getSubtreeWithPath("00").toStringSimetric());
+		
+		}
+		
 
 	}
 
