@@ -424,13 +424,6 @@ public class BinarySearchTreeImpl<T extends Comparable<? super T>> extends Abstr
 		return count;
 	} 
 
-	/* public int size(){
-		if(this.content == null){
-			return 0;
-		}
-		return 1 + getRightBST().size()+getLeftBST().size();
-	} */
-	
     /**
 	 * Cuenta el número de instancias de elementos diferentes del arbol 
 	 * 
